@@ -97,7 +97,7 @@
 
         function saveData(filename, filedata){
          $.ajax({
-            type:' post',
+            type: 'post',
             cache: false,
             url: 'store.php', // this is the path to the above PHP script
             data: {filename: filename, filedata: filedata}
