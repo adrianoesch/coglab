@@ -6,6 +6,7 @@
         <script src="../jsPsych-4.3/jspsych.js"></script>
         <script src="../jsPsych-4.3/plugins/jspsych-text.js"></script>
         <script src="../jsPsych-4.3/plugins/jspsych-single-stim.js"></script>
+        <script src="../jsPsych-4.3/plugins/jspsych-fullscreen.js"></script>
         <link href="../jsPsych-4.3/css/jspsych.css" rel="stylesheet" type="text/css"></link>
     </head>
     <body>
@@ -53,11 +54,28 @@
         }
 
 
+
+        var activate_fullscreen = {
+            type: 'fullscreen',
+            showtext: '<p style="padding-top: 50px; text-align: center;">This experiment is now shon in fullscreen-mode',
+            buttontext: "OK"
+        }
+
+        var end_fullscreen = {
+            type: 'fullscreen',
+            showtext: '<p style="padding-top: 50px; text-align: center;">exiting fullscreen-mode',
+            buttontext: "OK",
+            exit: true
+          }
+
+
         /* create experiment definition array */
         var experiment = [];
+        experiment.push(activate_fullscreen);
         experiment.push(welcome_block);
         experiment.push(instructions_block);
         experiment.push(test_block);
+        experiment.push(end_fullscreen);
 
         function saveData(filename, filedata){
          $.ajax({
