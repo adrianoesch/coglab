@@ -47,7 +47,7 @@
           }
         ];
 
-        var all_trials = jsPsych.randomization.repeat(test_stimuli, 10, true);
+        var all_trials = jsPsych.randomization.repeat(test_stimuli, 2, true);
 
         var post_trial_gap = function() {
           return Math.floor( Math.random() * 1500 ) + 750;
