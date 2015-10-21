@@ -7,8 +7,8 @@
       <h1>Coglab Experiments:</h1>
       <ul>
         <?php
-          array_diff(scandir('experiments/'), array('..', '.'));
-          foreach($people as $p){echo '<li>'.$p.'</li>';}
+          $experiments = array_diff(scandir('experiments/'), array('..', '.'));
+          foreach($experiments as $e){echo '<li>'.$e.'</li>';};
         ?>
       </ul>
     </body>
