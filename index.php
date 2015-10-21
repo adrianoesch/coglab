@@ -95,12 +95,32 @@
         experiment.push(test_block);
         experiment.push(debrief_block);
 
+        function launchFullScreen(element) {
+          if(element.requestFullScreen) {
+            element.requestFullScreen();
+          } else if(element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+          } else if(element.webkitRequestFullScreen) {
+            element.webkitRequestFullScreen();
+          }
+        }
+
+        // Launch fullscreen for browsers that support it!
+        launchFullScreen(document.documentElement);
+
+        function saveData(filename, filedata){
+         $.ajax({
+            type:' post',
+            cache: false,
+            url: 'store.php', // this is the path to the above PHP script
+            data: {filename: filename, filedata: filedata}
+         });
+        }
+
         /* start the experiment */
         jsPsych.init({
           experiment_structure: experiment,
-          on_finish: function() {
-            jsPsych.data.displayData();
-          }
+          on_finish: function(data){ saveData("filename.csv", jsPsych.data.dataAsCSV()) }
         });
       </script>
 </html>
