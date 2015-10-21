@@ -6,10 +6,8 @@
     <body>
       <h1>Coglab Experiments:</h1>
       <ul>
-        <?php
-          $experiments = array_diff(scandir('experiments/'), array('..', '.'));
-          foreach($experiments as $e){echo '<li>'.$e.'</li>';};
-        ?>
+        <li><a href="experiments/tutorial-rt.php">jsPsych Tutorial - Reaction Time</a></li>
+        <li><a href="experiments/wordlist-matrix.php">Wordlist - Matrix</a></li>
       </ul>
     </body>
 </html>

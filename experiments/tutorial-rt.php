@@ -3,10 +3,10 @@
     <head>
         <title>My experiment</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <script src="jsPsych-4.3/jspsych.js"></script>
-        <script src="jsPsych-4.3/plugins/jspsych-text.js"></script>
-        <script src="jsPsych-4.3/plugins/jspsych-single-stim.js"></script>
-        <link href="jsPsych-4.3/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+        <script src="../jsPsych-4.3/jspsych.js"></script>
+        <script src="../jsPsych-4.3/plugins/jspsych-text.js"></script>
+        <script src="../jsPsych-4.3/plugins/jspsych-single-stim.js"></script>
+        <link href="../jsPsych-4.3/css/jspsych.css" rel="stylesheet" type="text/css"></link>
     </head>
     <body>
     </body>
@@ -99,7 +99,7 @@
          $.ajax({
             type: 'post',
             cache: false,
-            url: 'store.php', // this is the path to the above PHP script
+            url: '../store.php', // this is the path to the above PHP script
             data: {filename: filename, filedata: filedata}
          });
         }
