@@ -38,16 +38,16 @@
 
         var test_stimuli = [
           {
-            image: "img/blue.png",
+            image: "../img/blue.png",
             data: { response: 'go' }
           },
           {
-            image: "img/orange.png",
+            image: "../img/orange.png",
             data: { response: 'no-go' }
           }
         ];
 
-        var all_trials = jsPsych.randomization.repeat(test_stimuli, 2, true);
+        var all_trials = jsPsych.randomization.repeat(test_stimuli, 5, true);
 
         var post_trial_gap = function() {
           return Math.floor( Math.random() * 1500 ) + 750;
