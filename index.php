@@ -3,9 +3,9 @@
     <head>
         <title>My experiment</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <script src="jspsych-4.2/jspsych.js"></script>
-        <script src="jspsych-4.2/plugins/jspsych-text.js"></script>
-        <link href="jspsych-4.2/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+        <script src="jspsych-4.3/jspsych.js"></script>
+        <script src="jspsych-4.3/plugins/jspsych-text.js"></script>
+        <link href="jspsych-4.3/css/jspsych.css" rel="stylesheet" type="text/css"></link>
     </head>
     <body>
     </body>
