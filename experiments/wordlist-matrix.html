@@ -96,12 +96,10 @@
          });
         }
 
-        filename = experiment_name.concat('/').concat(subjectID).concat('.csv')
-
         /* start the experiment */
         jsPsych.init({
           experiment_structure: experiment,
-          on_finish: function(data){ saveData(filename, jsPsych.data.dataAsCSV()) }
+          on_finish: function(data){ saveData(experiment_name.concat('.csv'), jsPsych.data.dataAsCSV()) }
       //     on_finish: function() {
       //   jsPsych.data.displayData();
       // }
