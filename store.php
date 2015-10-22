@@ -7,6 +7,6 @@ $filename = $_POST['filename'];
 if (file_exists($filename)) {
   file_put_contents($filename, $_POST['filedata'],APPEND_FILE);
 } else {
-  file_put_contents(, $_POST['filedata']);
+  file_put_contents($filename, $_POST['filedata']);
 };
 ?>
