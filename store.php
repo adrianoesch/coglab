@@ -5,7 +5,7 @@
 // write the file to disk
 $filename = $_POST['filename'];
 if (file_exists($filename)) {
-  file_put_contents($filename, $_POST['filedata'],APPEND_FILE);
+  file_put_contents($filename, $_POST['filedata'],FILE_APPEND);
 } else {
   file_put_contents($filename, $_POST['filedata']);
 };
