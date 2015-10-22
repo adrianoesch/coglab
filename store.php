@@ -3,7 +3,7 @@
 // the directory "data" is writable by the server (chmod 777)
 $filename = $_POST['filename'];
 $nameparts = explode($filename,'/')
-$foler = $nameparts[0]
+print_r($nameparts)
 $path = 'data/'.$folder
 if (!file_exists($path)) {
     mkdir($path, 0777, true);
