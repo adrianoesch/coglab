@@ -97,6 +97,7 @@
         }
 
         filename = 'data/'.concat(experiment_name).concat('.csv')
+        alert(filename)
 
         /* start the experiment */
         jsPsych.init({
