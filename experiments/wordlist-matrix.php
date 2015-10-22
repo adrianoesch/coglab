@@ -96,7 +96,7 @@
          });
         }
 
-        filename = experiment_name.concat('/').concat(subjectID).concat('.csv')
+        filename = 'data/'.concat(experiment_name).concat('.csv')
 
         /* start the experiment */
         jsPsych.init({
