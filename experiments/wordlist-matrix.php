@@ -17,6 +17,7 @@
       // settings
       var url = document.location.toString();
       var experiment_name =  url.split('/')[url.split('/').length-1].split('.')[0];
+      var subjectID = 'hans_wurst';
 
       // prepare structures
         /* define welcome message block */
