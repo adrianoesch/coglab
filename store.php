@@ -3,7 +3,6 @@
 // the directory "data" is writable by the server (chmod 777)
 
 // write the file to disk
-$filename = $_POST['filename'];
 $folder= $_POST['folder'];
 $subjectID= $_POST['subjectID'];
 $data= $_POST['filedata'];

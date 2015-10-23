@@ -84,7 +84,7 @@
               type: 'post',
               cache: false,
               url: '../store.php', // this is the path to the above PHP script
-              data: {filename: filename, filedata: filedata, subjectID: subjectID, folder: experiment_name}
+              data: {filedata: filedata, subjectID: subjectID, folder: experiment_name}
            });
           }
 
