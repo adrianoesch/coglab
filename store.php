@@ -4,9 +4,18 @@
 
 // write the file to disk
 $filename = $_POST['filename'];
-if (file_exists($filename)) {
-  file_put_contents($filename, $_POST['filedata'],FILE_APPEND);
-} else {
-  file_put_contents($filename, $_POST['filedata']);
-};
+$folder= $_POST['folder'];
+$subjectID= $_POST['subjectID'];
+$data= $_POST['filedata'];
+
+if(file_exists('data/'.$folder)){
+  mkdir('data/'.$folder,0777)
+}
+file_put_contents('data/'.$folder.'/'.$subjectID.'.csv', $data)
+
+// if (file_exists($filename)) {
+//   file_put_contents($filename, $data, FILE_APPEND);
+// } else {
+//   file_put_contents($filename, $_POST['filedata']);
+// };
 ?>
