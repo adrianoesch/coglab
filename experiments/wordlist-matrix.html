@@ -67,7 +67,7 @@
 
         var activate_fullscreen = {
             type: 'fullscreen',
-            showtext: '<p style="padding-top: 50px; text-align: center;">This experiment is now shon in fullscreen-mode',
+            showtext: '<p style="padding-top: 50px; text-align: center;">Welcome</p><p>Please click ok to enter full screen mode and enter the experiment.',
             buttontext: "OK"
         }
 
@@ -79,7 +79,7 @@
           }
 
 
-          function saveData(filename, filedata){
+          function saveData(filedata){
            $.ajax({
               type: 'post',
               cache: false,
@@ -98,7 +98,6 @@
         var experiment = [];
         experiment.push(save_get_block);
         experiment.push(activate_fullscreen);
-        experiment.push(welcome_block);
         experiment.push(instructions_block);
         experiment.push(word_presentation);
         experiment.push(response_block);
@@ -108,7 +107,7 @@
         /* start the experiment */
         jsPsych.init({
           experiment_structure: experiment,
-          on_finish: function(data){ saveData(filename, jsPsych.data.dataAsCSV()) }
+          on_finish: function(data){ saveData(jsPsych.data.dataAsCSV()) }
           // on_finish: function() {jsPsych.data.displayData('JSON')}
         });
       </script>
