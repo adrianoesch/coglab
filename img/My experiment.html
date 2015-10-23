@@ -1,18 +1,18 @@
-<!doctype html>
-<html>
-    <head>
+<!DOCTYPE html>
+<!-- saved from url=(0091)file:///Users/adrianoesch/Documents/Work/coglab/php/experiments/wordlist-matrix.html?id=123 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
         <title>My experiment</title>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <script src="../jsPsych-4.3/jspsych.js"></script>
-        <script src="../jsPsych-4.3/plugins/jspsych-text.js"></script>
-        <script src="../jsPsych-4.3/plugins/jspsych-single-stim.js"></script>
-        <script src="../jsPsych-4.3/plugins/jspsych-fullscreen.js"></script>
-        <script src="../jsPsych-4.3/plugins/jspsych-response-table.js"></script>
-        <script src="../jsPsych-4.3/plugins/jspsych-save-get-vars.js"></script>
-        <link href="../jsPsych-4.3/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+        <script src="./My experiment_files/jquery.min.js"></script>
+        <script src="./My experiment_files/jspsych.js"></script>
+        <script src="./My experiment_files/jspsych-text.js"></script>
+        <script src="./My experiment_files/jspsych-single-stim.js"></script>
+        <script src="./My experiment_files/jspsych-fullscreen.js"></script>
+        <script src="./My experiment_files/jspsych-response-table.js"></script>
+        <script src="./My experiment_files/jspsych-save-get-vars.js"></script>
+        <link href="./My experiment_files/jspsych.css" rel="stylesheet" type="text/css">
     </head>
-    <body>
-    </body>
+    <body class="jspsych-display-element">
+    
     <script>
       // settings
       var experiment_name = 'wordlist-matrix';
@@ -92,7 +92,7 @@
 
         var save_get_block = {
             type: 'save-get-vars',
-            all: "True"
+            vars: ['id']
           }
 
         /* create experiment definition array */
@@ -110,7 +110,10 @@
         jsPsych.init({
           experiment_structure: experiment,
           // on_finish: function(data){ saveData(filename, jsPsych.data.dataAsCSV()) }
-          on_finish: function() {jsPsych.data.displayData('JSON')}
+          on_finish: function() {
+        jsPsych.data.displayData();
+      }
         });
       </script>
-</html>
+
+<pre id="jspsych-data-display">[]</pre></body></html>
