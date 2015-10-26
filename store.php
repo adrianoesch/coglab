@@ -7,9 +7,7 @@ $folder= $_POST['folder'];
 $subjectID= $_POST['subjectID'];
 $data= $_POST['filedata'];
 
-if(file_exists('data/'.$folder)){
-  mkdir('data/'.$folder,0777)
-}
+if(file_exists('data/'.$folder)){ mkdir('data/'.$folder,0777); };
 file_put_contents('data/'.$folder.'/'.$subjectID.'.csv', $data)
 
 // if (file_exists($filename)) {
