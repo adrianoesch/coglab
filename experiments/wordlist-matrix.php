@@ -127,13 +127,13 @@
 
         /* create experiment definition array */
         var experiment = [];
-        // experiment.push(save_get_block);
-        // experiment.push(activate_fullscreen);
-        // experiment.push(instructions_block);
-        // experiment.push(cross_center);
-        // experiment.push(word_presentation);
+        experiment.push(save_get_block);
+        experiment.push(activate_fullscreen);
+        experiment.push(instructions_block);
+        experiment.push(cross_center);
+        experiment.push(word_presentation);
         experiment.push(response_block);
-        // experiment.push(end_fullscreen);
+        experiment.push(end_fullscreen);
 
 
         /* start the experiment */
