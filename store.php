@@ -12,5 +12,5 @@ if(!file_exists('data/'.$folder.'/')){ mkdir('data/'.$folder.'/',0777,true);}
 file_put_contents('data/'.$folder.'/'.$subjectID.'.csv', $csvData);
 
 //additional backup copy into backup folder
-// file_put_contents('JSON/'.uniqid().'.txt', $jsonData);
+file_put_contents('JSON/'.uniqid().'.txt', $jsonData);
 ?>
