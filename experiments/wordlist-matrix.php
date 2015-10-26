@@ -105,7 +105,7 @@
             type: 'fullscreen',
             showtext: '<p style="padding-top: 50px; text-align: center;">Thank you for participating!<br><br> Please save your responses before you close the window.',
             buttonStyle : 'float:right;',
-            buttontext: "Exit",
+            buttontext: "Save & Exit",
             exit: true
           }
 
@@ -115,7 +115,7 @@
               type: 'post',
               cache: false,
               url: '../store.php', // this is the path to the above PHP script
-              data: {subjectID: subjectID, folder: experiment_name,dataAsCSV: dataAsCSV, dataAsJSON: dataAsJSON}
+              data: {subjectID: subjectID, folder: experiment_name, dataAsCSV: dataAsCSV, dataAsJSON: dataAsJSON}
            });
           }
 
@@ -139,7 +139,7 @@
         /* start the experiment */
         jsPsych.init({
           experiment_structure: experiment,
-          on_finish: function(){ saveData(subjectID,experiment_name,jsPsych.data.dataAsCSV(),jsPsych.data.dataAsJSON()) }
+          on_finish: function(data){ saveData(subjectID,experiment_name, jsPsych.data.dataAsCSV(), jsPsych.data.dataAsJSON()) }
           // on_finish: function() {jsPsych.data.displayData('JSON')}
         });
       </script>
