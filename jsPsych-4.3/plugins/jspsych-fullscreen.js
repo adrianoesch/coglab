@@ -9,6 +9,7 @@ jsPsych['fullscreen'] = (function(){
         trials[0].text = params.showtext;
         trials[0].button = params.buttontext;
         trials[0].exit = params.exit || false;
+        trials[0].buttonStyle = params.buttonStyle || "";
 
         return trials;
     }
@@ -18,7 +19,7 @@ jsPsych['fullscreen'] = (function(){
     plugin.trial = function(display_element, trial){
         display_element.html(trial.text);
 
-        display_element.append("<div class='jspsych-fullscreen'><button id='jspsych-fullscreen-button'>" + trial.button + "</button></div>");
+        display_element.append("<div style="+trial.buttonStyle+"><button id='jspsych-fullscreen-button'>" + trial.button + "</button></div>");
         $('#jspsych-fullscreen-button').on('click',function(){
             if (!trial.exit) { launchIntoFullscreen(document.documentElement); }
             else { quitFullscreen(document.documentElement);}

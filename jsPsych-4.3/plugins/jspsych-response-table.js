@@ -15,25 +15,31 @@
      trials[0].words = params.words
      trials[0].rows = params.rows
      trials[0].cols = params.cols
+     trials[0].tdStyle = (typeof params.tdStyle === 'undefined') ? {} : params.tdStyle ;
+     trials[0].tableStyle = (typeof params.tableStyle === 'undefined') ? {} : params.tableStyle ;
      // supporting the generic data object with the following line
      // is always a good idea. it allows people to pass in the data
      // parameter, but if they don't it gracefully adds an empty object
      // in it's place.
-     trials[0].data = (typeof params.data === 'undefined') ? {} : params.data[i];
+     trials[0].data = (typeof params.data === 'undefined') ? {} : params.data[0];
      return trials;
    };
 
    plugin.trial = function(display_element, trial){
     //  prepare html table
-     response_table = "<table id='response_table'>"
+
      row = 'A'
      rows = trial.rows
      cols = trial.cols
+     tdStyle = trial.tdStyle
+     tableStyle = trial.tableStyle
+
+     response_table = "<table id='response_table' style='"+tableStyle+"'>"
      idx=0
      for (i=0;i<rows;i++){
        response_table = response_table.concat('<tr>')
        for(j=0;j<cols;j++){
-         tdStr = "<td class='teAc' id='"+row+(j+1).toString()+"'>"+words_shuffled2[idx]+"</td>"
+         tdStr = "<td class='teAc' style='"+tdStyle+"'id='"+row+(j+1).toString()+"'>"+words_shuffled2[idx]+"</td>"
          response_table = response_table.concat(tdStr)
          idx+=1
        }
@@ -51,7 +57,7 @@
        };
        jsPsych.data.write(trial_data);
        // clear the display
-       display_element.html('');
+       window.setTimeout(function(){display_element.html('')},1000);
        // move on to the next trial
        jsPsych.finishTrial();
      }
