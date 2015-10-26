@@ -110,13 +110,12 @@
           }
 
 
-          function saveData(filedata,subjectID,experiment_name){
-          alert({filedata: filedata, subjectID: subjectID, folder: experiment_name})
+          function saveData(subjectID,experiment_name,dataAsCSV,dataAsJSON){
            $.ajax({
               type: 'post',
               cache: false,
               url: '../store.php', // this is the path to the above PHP script
-              data: {filedata: filedata, subjectID: subjectID, folder: experiment_name}
+              data: {subjectID: subjectID, folder: experiment_name,dataAsCSV: dataAsCSV, dataAsJSON: dataAsJSON}
            });
           }
 
@@ -140,7 +139,7 @@
         /* start the experiment */
         jsPsych.init({
           experiment_structure: experiment,
-          on_finish: function(data){ saveData(jsPsych.data.dataAsCSV(),subjectID,experiment_name) }
+          on_finish: function(){ saveData(subjectID,experiment_name,jsPsych.data.dataAsCSV(),jsPsych.data.dataAsJSON()) }
           // on_finish: function() {jsPsych.data.displayData('JSON')}
         });
       </script>

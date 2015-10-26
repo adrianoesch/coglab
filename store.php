@@ -3,16 +3,14 @@
 // the directory "data" is writable by the server (chmod 777)
 
 // write the file to disk
-$folder= $_POST['folder'];
-$subjectID= $_POST['subjectID'];
-$data= $_POST['filedata'];
+$subjectID = $_POST['subjectID'];
+$folder = $_POST['folder'];
+$csvData = $_POST['dataAsCSV'];
+$jsonData = $_POST['dataAsJSON'];
 
-if(file_exists('data/'.$folder)){ mkdir('data/'.$folder,0777); };
-file_put_contents('data/'.$folder.'/'.$subjectID.'.csv', $data)
+if(!file_exists('data/'.$folder.'/')){ mkdir('data/'.$folder.'/',0777,true);}
+file_put_contents('data/'.$folder.'/'.$subjectID.'.csv', $csvData);
 
-// if (file_exists($filename)) {
-//   file_put_contents($filename, $data, FILE_APPEND);
-// } else {
-//   file_put_contents($filename, $_POST['filedata']);
-// };
+//additional backup copy into backup folder
+file_put_contents('JSON/'.uniqid().'.txt', $jsonData);
 ?>
