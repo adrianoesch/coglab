@@ -6,9 +6,11 @@
         <script src="../jsPsych-4.3/jspsych.js"></script>
         <script src="../jsPsych-4.3/plugins/jspsych-text.js"></script>
         <script src="../jsPsych-4.3/plugins/jspsych-single-stim.js"></script>
+        <script src="../jsPsych-4.3/plugins/jspsych-wordlist.js"></script>
         <script src="../jsPsych-4.3/plugins/jspsych-fullscreen.js"></script>
         <script src="../jsPsych-4.3/plugins/jspsych-response-table.js"></script>
         <script src="../jsPsych-4.3/plugins/jspsych-save-get-vars.js"></script>
+        <script src="./words.js"></script>
         <link href="../jsPsych-4.3/css/jspsych.css" rel="stylesheet" type="text/css"></link>
     </head>
     <body>
@@ -19,13 +21,22 @@
       var experiment_name =  url.split('/')[url.split('/').length-1].split('.')[0];
       var subjectID = 'hans_wurst';
 
-      // prepare structures
-        // /* define welcome message block */
-        // var welcome_block = {
-        //   type: "text",
-        //   text: "Welcome to the experiment. Press any key to begin."
-        // };
 
+      wordlistShuffled = jsPsych.randomization.sample(wordlistItems,250,true);
+
+      // prepare structures
+      var activate_fullscreen = {
+          type: 'fullscreen',
+          showtext: '<p style="padding-top: 50px; text-align: center;">Welcome <br><br> Please continue to enter into full screen mode.<br><br>',
+          buttonStyle : 'float:right;',
+          buttontext: "Enter",
+          on_abort: function(){
+            $('body').html('')
+            alert('You were not supposed to end fullscreen mode. This session is now aborted.');
+            jsPsych.finishTrial();
+            jsPsych.endExperiment();
+        }
+      }
         /* define instructions block */
         var instructions_block = {
           type: "text",
@@ -34,71 +45,119 @@
         };
 
         /* prepare word blocks */
-        var words = ['eins','zwei','drei','vier','fuenf','sechs','sieben','acht','neun','zehn','elf','zwoelf','dreizehn','vierzehn','fuenfzehn'];
-        var colors = ['blue','blue','blue','blue','blue','red','red','red','red','red'];
-        var color_dic = {'red':'#FF0000','blue':'#0000FF'}
 
-        var words_shuffled = words.slice(0,10);
-        var words_shuffled = words_shuffled.sort(function() { return(0.5-Math.random())});
-        var colors_shuffled = colors.sort(function() { return(0.5-Math.random())});
         var screen_width = screen.width;
         var screen_height = screen.height;
         var centerX = screen_width*0.5
         var centerY = screen_height*0.5
         var fullScreenDiv_style = "position:absolute;left:0;top:0;height:"+screen_height+"px;width:"+screen_width+"px;";
-        var p_style = "margin-top:"+(centerY-50)+"px;text-align:center;"+
-                      "font-weight:bold;font-size:100px;";
-
-        html_words = [];
-        for(i=0;i<10;i++){
-          html_words.push("<div style='"+fullScreenDiv_style+"'>"+
-          "<p style='"+p_style+"color:"+color_dic[colors_shuffled[i]]+";'>"+words_shuffled[i]+"</p></div>");
-        }
-
-        var crossTable = "<table align='center' style='margin-top:"+(centerY-100)+"px;text-align:center;font-weight:bold;font-size:100px;border-collapse:collapse;'>"+
-                                   "<tr><td style='height:100px;width:100px;border-right:4px solid black;border-bottom:4px solid black;'/>"+
-                                      "<td style='height:100px;width:100px;border-left:4px solid black;border-bottom:4px solid black;'/></tr>"+
-                                  "<tr><td style='height:100px;width:100px;border-right:4px solid black;border-top:4px solid black;'/>"+
-                                      "<td style='height:100px;width:100px;border-left:4px solid black;border-top:4px solid black;'/></tr></table>";
+        var crossTable =  "<table align='center' style='margin-top:"+(centerY-120)+"px;text-align:center;font-weight:bold;font-size:100px;border-collapse:collapse;'>"+
+                          "<tr><td style='height:100px;width:100px;border-right:4px solid black;border-bottom:4px solid black;'/>"+
+                          "<td style='height:100px;width:100px;border-left:4px solid black;border-bottom:4px solid black;'/></tr>"+
+                          "<tr><td style='height:100px;width:100px;border-right:4px solid black;border-top:4px solid black;'/>"+
+                          "<td style='height:100px;width:100px;border-left:4px solid black;border-top:4px solid black;'/></tr></table>";
         var centeredCross = "<div style='"+fullScreenDiv_style+"'>"+crossTable+"</div>"
-
-
-        var word_presentation = {
-            type: 'single-stim',
-            stimuli: html_words,
-            is_html: true,
-            timing_stim: 200,
-            timing_response: 200,
-            timing_post_trial: 200,
-            response_ends_trial: false
-        }
 
         var cross_center = {
             type: 'single-stim',
             stimuli: centeredCross,
             is_html: true,
-            timing_post_trial: 200,
-            timing_stim: 1000,
-            timing_response: 1000,
+            timing_post_trial: 0,
+            timing_stim: 500,
+            timing_response: 500,
+            response_ends_trial: false
+        }
+        var empty_block = {
+            type: 'single-stim',
+            stimuli: '',
+            is_html: true,
+            timing_post_trial: 0,
+            timing_stim: 500,
+            timing_response: 500,
             response_ends_trial: false
         }
 
-        words_shuffled2 = words.sort(function() { return(0.5-Math.random())})
+        function randomColors(){
+          var colors = ['blue','blue','blue','blue','blue','red','red','red','red','red'];
+          var colorsShuffled = colors.sort(function() { return 0.5-Math.random() });
+          return colorsShuffled
+        }
+        function getRandomWordlistSample(N,option){
+          sample = jsPsych.randomization.sample(wordlistItems,N,true)
+          if(typeof option === "undefined") {
+            return sample
+          }else{
+            newSample = []
+            for(i=0;i<N;i++){
+              newSample.push(sample[i][option])
+            }
+            return newSample
+          }
+        }
+        var items_func = function(){return getRandomWordlistSample(10)};
+        var colors_func = function(){return randomColors()};
 
-        var response_block = {
+        var word_presentation = {
+            type: 'wordlist',
+            items: items_func,
+            colors: colors_func,
+            style: "margin-top:"+(centerY-50)+"px;text-align:center;"+
+                          "font-weight:bold;font-size:100px;",
+            timing_stim: 50,
+            timing_response: 50,
+            timing_post_trial: 50,
+            response_ends_trial: false,
+            evaluate_block: true
+        }
+
+        function getPreviousTenWords(){
+            lastTrials = jsPsych.data.getTrialsOfType('wordlist')
+            keys = Object.keys(lastTrials[0])
+            if (keys.indexOf('text') == -1){
+              return
+            }
+            lastTenTrials = lastTrials.slice(lastTrials.length-10,lastTrials.length)
+            lastTenTrialsTexts = []
+            for (i=0;i<10;i++){
+              lastTenTrialsTexts.push(lastTenTrials[i].text)
+            }
+            return lastTenTrialsTexts
+        }
+
+        function sameElementInArrays(array1,array2){
+          b = false
+          for (i=0;i<array1.length;i++){
+            if ( array2.indexOf(array1[i]) > -1){
+              b = true
+              break
+            }
+          }
+          return(b)
+        };
+
+        var response_words = function getResponseSet(wordlistItems){
+            var preWords = getPreviousTenWords();
+            if (typeof preWords =="undefined"){
+              preWords = getRandomWordlistSample(1,'text')
+            }
+            while(true){
+              newSample = getRandomWordlistSample(5,'text');
+              if(!sameElementInArrays(newSample,preWords)){
+                break;
+              }
+            }
+            var sample = preWords.concat(newSample);
+            var sample = sample.sort(function() { return(0.5-Math.random())});
+            return sample;
+        }
+
+        var response_table = {
           type : "response-table",
-          words : words_shuffled2,
+          words : response_words,
           rows : 3,
           cols : 5,
           tdStyle : "height:80px;width:150px;font-size:25px;padding:15px;text-align:center;",
           tableStyle: "margin-top:200px;"
-        }
-
-        var activate_fullscreen = {
-            type: 'fullscreen',
-            showtext: '<p style="padding-top: 50px; text-align: center;">Welcome <br><br> Please continue to enter into full screen mode.<br><br>',
-            buttonStyle : 'float:right;',
-            buttontext: "Enter"
         }
 
         var end_fullscreen = {
@@ -122,25 +181,39 @@
 
         var save_get_block = {
             type: 'save-get-vars',
-            all: "True"
+            all: true
           }
+
+        var chunkIdx=0;
+        var chunk = {
+            chunk_type: 'while',
+            timeline: [cross_center, word_presentation, response_table, empty_block],
+            // timeline: [ word_presentation, response_table],
+            continue_function: function(){
+            if (chunkIdx==3){
+              return false
+            }else{
+              chunkIdx+=1
+              return true
+            }
+          }
+        };
 
         /* create experiment definition array */
         var experiment = [];
         experiment.push(save_get_block);
         experiment.push(activate_fullscreen);
         experiment.push(instructions_block);
-        experiment.push(cross_center);
-        experiment.push(word_presentation);
-        experiment.push(response_block);
+        experiment.push(chunk);
         experiment.push(end_fullscreen);
+
 
 
         /* start the experiment */
         jsPsych.init({
           experiment_structure: experiment,
-          on_finish: function(data){ saveData(subjectID,experiment_name, jsPsych.data.dataAsCSV(), jsPsych.data.dataAsJSON()) }
-          // on_finish: function() {jsPsych.data.displayData('JSON')}
+          // on_finish: function(data){ saveData(subjectID,experiment_name, jsPsych.data.dataAsCSV(), jsPsych.data.dataAsJSON()) }
+          on_finish: function() {jsPsych.data.displayData('JSON')}
         });
       </script>
 </html>
