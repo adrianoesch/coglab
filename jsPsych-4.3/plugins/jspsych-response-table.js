@@ -27,37 +27,37 @@
 
    plugin.trial = function(display_element, trial){
     //  prepare html table
+     trial = jsPsych.pluginAPI.evaluateFunctionParameters(trial);
+     rows = trial.rows;
+     cols = trial.cols;
+     tdStyle = trial.tdStyle;
+     tableStyle = trial.tableStyle;
 
-     row = 'A'
-     rows = trial.rows
-     cols = trial.cols
-     tdStyle = trial.tdStyle
-     tableStyle = trial.tableStyle
-
-     response_table = "<table id='response_table' style='"+tableStyle+"'>"
-     idx=0
+     response_table = "<table id='response_table' style='"+tableStyle+"'>";
+     idx=0;
      for (i=0;i<rows;i++){
-       response_table = response_table.concat('<tr>')
+       response_table = response_table.concat('<tr>');
        for(j=0;j<cols;j++){
-         tdStr = "<td class='teAc' style='"+tdStyle+"'id='"+row+(j+1).toString()+"'>"+words_shuffled2[idx]+"</td>"
-         response_table = response_table.concat(tdStr)
-         idx+=1
+         tdStr = "<td class='teAc' style='"+tdStyle+"'id='r"+(i+1).toString()+"-c"+(j+1).toString()+"'>"+trial.words[idx]+"</td>";
+         response_table = response_table.concat(tdStr);
+         idx+=1;
        }
-       response_table = response_table.concat('</tr>')
-       row = String.fromCharCode(row.charCodeAt(0)+1)
+       response_table = response_table.concat('</tr>');
      }
-     response_table = response_table.concat("</table>")
+     response_table = response_table.concat("</table>");
 
      // prepare end function
      var endTrial = function(){
        trial_data = {
+         "words_presented":trial.words,
          "rt": JSON.stringify(responseTimes),
          "location": JSON.stringify(responseLocation),
-         "content": JSON.stringify(responseContent)
+         "text": JSON.stringify(responseContent)
        };
        jsPsych.data.write(trial_data);
        // clear the display
-       window.setTimeout(function(){display_element.html('')},1000);
+       display_element.html('')
+
        // move on to the next trial
        jsPsych.finishTrial();
      }
@@ -82,10 +82,7 @@
        responseContent.push(event.target.textContent);
        responseLocation.push(event.target.id);
        t0=t1;
-       $(event.target).removeClass('teAc').addClass('teIn').prop('onclick',null).off('click');
-       $(event.target).unbind('mouseenter mouseleave');
-       $(event.target).css("background-color", "rgb(180,180,180)");
-       if (idx==rows*cols-1){endTrial()}
+       if (idx==4){endTrial()}
        idx+=1;
      });
   }

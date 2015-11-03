@@ -6,7 +6,7 @@
 $subjectID = $_POST['subjectID'];
 $folder = $_POST['folder'];
 $csvData = $_POST['dataAsCSV'];
-// $jsonData = $_POST['dataAsJSON'];
+$jsonData = $_POST['dataAsJSON'];
 
 if(!file_exists('data/'.$folder.'/')){ mkdir('data/'.$folder.'/',0777,true);}
 file_put_contents('data/'.$folder.'/'.$subjectID.'.csv', $csvData);

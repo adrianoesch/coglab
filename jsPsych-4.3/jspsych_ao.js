@@ -213,7 +213,6 @@
 		}
 
 		function parseExpStructure(experiment_structure) {
-
 			if(!Array.isArray(experiment_structure)){
 				throw new Error("Invalid experiment structure. Experiment structure must be an array");
 			}
@@ -226,14 +225,12 @@
 		}
 
 		function createExperimentChunk(chunk_definition, parent_chunk, relative_id){
-
 			var chunk = {};
 
-			chunk.definition = chunk_definition;
+			chunk.definition = chunk_definition
 			chunk.timeline = parseChunkDefinition(chunk_definition.timeline);
 			chunk.parentChunk = parent_chunk;
 			chunk.relID = relative_id;
-
 			chunk.type = chunk_definition.chunk_type; // root, linear, while, if
 
 			chunk.currentTimelineLocation = 0;
@@ -292,7 +289,6 @@
 						return this.parentChunk.next();
 					}
 				}
-
 				return this.timeline[this.currentTimelineLocation].next();
 			};
 
@@ -392,7 +388,7 @@
 				this.iteration++;
 				var eval=false;
 				for (i=0;i<this.timeline.length;i++){
-					if (this.timeline[i].evaluate_block){
+					if (this.timeline[i].block_definition.evaluate_block){
 						eval=true;
 						break
 					}
@@ -407,14 +403,10 @@
 			};
 
 			function parseChunkDefinition(chunk_timeline){
-
 				var timeline = [];
-
 				for (var i = 0; i < chunk_timeline.length; i++) {
 
-
 					var ct = chunk_timeline[i].chunk_type;
-
 					if(typeof ct !== 'undefined') {
 
 						if($.inArray(ct, ["linear", "while", "if"]) > -1){
@@ -437,12 +429,19 @@
 						// call function parameters if flagged evaluate_block = true
 						chunk_timeline[i].evaluate_block = (typeof chunk_timeline[i].evaluate_block === 'undefined') ? false : chunk_timeline[i].evaluate_block;
 						if (chunk_timeline[i].evaluate_block){
-							var keys = Object.keys(chunk_timeline[i]);
-							for (var j = 0; j < keys.length; j++) {
-								if (typeof chunk_timeline[i][keys[j]] == "function") {
-									chunk_timeline[i][keys[j]] = chunk_timeline[i][keys[j]].call();
+								if (typeof chunk_timeline[i]['functions'] === 'undefined'){
+									chunk_timeline[i].functions = {};
+									var keys = Object.keys(chunk_timeline[i]);
+									for (var j = 0; j < keys.length; j++) {
+										if (typeof chunk_timeline[i][keys[j]] == "function") {
+											chunk_timeline[i]['functions'][keys[j]] = chunk_timeline[i][keys[j]];
+										}
+									}
 								}
-							}
+								var funKeys = Object.keys(chunk_timeline[i].functions);
+								for (var j = 0; j < funKeys.length; j++){
+									chunk_timeline[i][funKeys[j]] = chunk_timeline[i].functions[funKeys[j]].call();
+								}
 						}
 
 						var trials = jsPsych[plugin_name].create(chunk_timeline[i]);
@@ -465,7 +464,7 @@
 						var repetitions = (typeof chunk_timeline[i].repetitions === 'undefined') ? 1 : chunk_timeline[i].repetitions;
 
 						for(var j = 0; j < repetitions; j++) {
-							timeline.push(createBlock(trials, randomize_order, chunk_timeline[i].evaluate_block));
+							timeline.push(createBlock(trials, randomize_order,chunk_timeline[i].evaluate_block));
 						}
 					}
 				}
@@ -477,7 +476,7 @@
 
 		}
 
-		function createBlock(trial_list, randomize_order, eval_block) {
+		function createBlock(trial_list, randomize_order, evaluateBlock) {
 
 			var block = {
 
@@ -487,7 +486,7 @@
 
 				type: 'block',
 
-				evaluate_block: eval_block,
+				evaluate_block: evaluateBlock,
 
 				randomize_order: randomize_order,
 
@@ -672,24 +671,6 @@
 			dataProperties = $.extend({}, dataProperties, properties);
 		};
 
-		module.fromURL = function(){
-			// adapted from stackoverflow: http://stackoverflow.com/posts/12049737/revisions
-			var $_GET = {};
-			if(document.location.toString().indexOf('?') !== -1) {
-						var query = document.location
-													 .toString()
-													 .replace(/^.*?\?/, '')
-													 .replace(/#.*$/, '')
-													 .split('&');
-
-						for(var i=0, l=query.length; i<l; i++) {
-							 var aux = decodeURIComponent(query[i]).split('=');
-							 $_GET[aux[0]] = aux[1];
-						}
-				}
-				return $_GET
-		};
-
 		module.addDataToLastTrial = function(data){
 			if(allData.length == 0){
 				throw new Error("Cannot add data to last trial - no data recorded so far");
@@ -700,6 +681,11 @@
 		module.dataAsCSV = function() {
 			var dataObj = module.getData();
 			return JSON2CSV(dataObj);
+		};
+
+		module.dataAsJSON = function() {
+			var dataObj = module.getData();
+			return JSON.stringify(dataObj);
 		};
 
 		module.localSave = function(filename, format) {
