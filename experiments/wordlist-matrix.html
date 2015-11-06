@@ -2,7 +2,8 @@
 <html>
     <head>
         <title>Coglab Experiment</title>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
+        <script src="../jsPsych-4.3/jquery.min.js"></script>
         <script src="../jsPsych-4.3/jspsych.js"></script>
         <script src="../jsPsych-4.3/plugins/jspsych-text.js"></script>
         <script src="../jsPsych-4.3/plugins/jspsych-single-stim.js"></script>
@@ -19,23 +20,47 @@
       // settings
       var url = document.location.toString();
       var experiment_name =  url.split('/')[url.split('/').length-1].split('.')[0];
+      var getVars = jsPsych.data.fromURL();
       var subjectID = 'hans_wurst';
+      var uniqueId = jsPsych.data.uniqueId();
 
-
-      wordlistShuffled = jsPsych.randomization.sample(wordlistItems,250,true);
+      getVars.type = 'fromURL';
+      jsPsych.data.addProperties(getVars);
+      jsPsych.data.addProperties({
+        type: 'general',
+        experiment_name: experiment_name,
+        subjectID: subjectID,
+        uniqueId: uniqueId
+      });
 
       // prepare structures
       var activate_fullscreen = {
           type: 'fullscreen',
           showtext: '<p style="padding-top: 50px; text-align: center;">Welcome <br><br> Please continue to enter into full screen mode.<br><br>',
           buttonStyle : 'float:right;',
-          buttontext: "Enter",
-          on_abort: function(){
-            $('body').html('')
-            alert('You were not supposed to end fullscreen mode. This session is now aborted.');
-            jsPsych.finishTrial();
-            jsPsych.endExperiment();
-        }
+          buttontext: "Enter"
+      //     on_fullscreen_abort: function(){
+      //       alert('fs_abort')
+      //       // $('body').html('')
+      //       // alert('You were not supposed to end fullscreen mode. This session is now aborted.');
+      //       // jsPsych.finishTrial();
+      //       // jsPsych.endExperiment();
+      //   },
+      //     on_hide_abort:function(){
+      //     alert('hide_abort')
+      //     // $('body').html('')
+      //     // alert('You were not supposed to end fullscreen mode. This session is now aborted.');
+      //     // jsPsych.finishTrial();
+      //     // jsPsych.endExperiment();
+      // },
+      //   on_launch_fail: function(){
+      //       jsPsych.finishTrial();
+      //       string = "<p>Your Browser doesn't allow launching into fullscreen. Please update your Browser or use another one for this experiment. We recommend using Chrome or Firefox.</p>";
+      //       jsPsych.endExperiment(string);
+      //     },
+      //     on_hide_fail:function(){
+      //       alert('hide_fail')
+      //     }
       }
         /* define instructions block */
         var instructions_block = {
@@ -63,25 +88,18 @@
             stimuli: centeredCross,
             is_html: true,
             timing_post_trial: 0,
-            timing_stim: 500,
             timing_response: 500,
             response_ends_trial: false
         }
         var empty_block = {
             type: 'single-stim',
             stimuli: '',
-            is_html: true,
             timing_post_trial: 0,
-            timing_stim: 500,
-            timing_response: 500,
+            timing_response: 2000,
             response_ends_trial: false
         }
 
-        function randomColors(){
-          var colors = ['blue','blue','blue','blue','blue','red','red','red','red','red'];
-          var colorsShuffled = colors.sort(function() { return 0.5-Math.random() });
-          return colorsShuffled
-        }
+
         function getRandomWordlistSample(N,option){
           sample = jsPsych.randomization.sample(wordlistItems,N,true)
           if(typeof option === "undefined") {
@@ -95,7 +113,7 @@
           }
         }
         var items_func = function(){return getRandomWordlistSample(10)};
-        var colors_func = function(){return randomColors()};
+        var colors_func = function(){return jsPsych.randomization.repeat(['red','blue'],5)};
 
         var word_presentation = {
             type: 'wordlist',
@@ -103,10 +121,10 @@
             colors: colors_func,
             style: "margin-top:"+(centerY-50)+"px;text-align:center;"+
                           "font-weight:bold;font-size:100px;",
-            timing_stim: 50,
-            timing_response: 50,
-            timing_post_trial: 50,
-            response_ends_trial: false,
+            timing_stim: 2000,
+            timing_response: 2500,
+            timing_post_trial: 0,
+            response_ends_trial: true,
             evaluate_block: true
         }
 
@@ -168,7 +186,6 @@
             exit: true
           }
 
-
           function saveData(subjectID,experiment_name,dataAsCSV,dataAsJSON){
            $.ajax({
               type: 'post',
@@ -190,7 +207,7 @@
             timeline: [cross_center, word_presentation, response_table, empty_block],
             // timeline: [ word_presentation, response_table],
             continue_function: function(){
-            if (chunkIdx==3){
+            if (chunkIdx==2){
               return false
             }else{
               chunkIdx+=1
@@ -201,12 +218,10 @@
 
         /* create experiment definition array */
         var experiment = [];
-        experiment.push(save_get_block);
         experiment.push(activate_fullscreen);
         experiment.push(instructions_block);
         experiment.push(chunk);
         experiment.push(end_fullscreen);
-
 
 
         /* start the experiment */

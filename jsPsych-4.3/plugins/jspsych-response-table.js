@@ -71,6 +71,12 @@
      display_element.html(response_table);
      $(".teAc").mouseenter(function(){$(this).css("background", "rgb(180,180,180)")});
      $(".teAc").mouseleave(function(){$(this).css("background", "")});
+     $(".teAc").click(function(e) {
+       var that = this
+       $(that).css("background", "red");
+       setTimeout(function(){
+         $(that).css("background", "rgb(180,180,180)")},100);
+      });
 
     // and start listening and recording
      idx = 0;

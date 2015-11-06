@@ -175,7 +175,8 @@
 			}
 		};
 
-		core.endExperiment = function(){
+		core.endExperiment = function(endMessage){
+			if (typeof endMessage != 'undefined') {root_chunk.endMessage = endMessage;}
 			root_chunk.end();
 		}
 
@@ -213,6 +214,7 @@
 		}
 
 		function parseExpStructure(experiment_structure) {
+
 			if(!Array.isArray(experiment_structure)){
 				throw new Error("Invalid experiment structure. Experiment structure must be an array");
 			}
@@ -225,12 +227,14 @@
 		}
 
 		function createExperimentChunk(chunk_definition, parent_chunk, relative_id){
+
 			var chunk = {};
 
-			chunk.definition = chunk_definition
+			chunk.definition = chunk_definition;
 			chunk.timeline = parseChunkDefinition(chunk_definition.timeline);
 			chunk.parentChunk = parent_chunk;
 			chunk.relID = relative_id;
+
 			chunk.type = chunk_definition.chunk_type; // root, linear, while, if
 
 			chunk.currentTimelineLocation = 0;
@@ -289,6 +293,7 @@
 						return this.parentChunk.next();
 					}
 				}
+
 				return this.timeline[this.currentTimelineLocation].next();
 			};
 
@@ -388,7 +393,7 @@
 				this.iteration++;
 				var eval=false;
 				for (i=0;i<this.timeline.length;i++){
-					if (this.timeline[i].block_definition.evaluate_block){
+					if (this.timeline[i].evaluate_block){
 						eval=true;
 						break
 					}
@@ -403,10 +408,14 @@
 			};
 
 			function parseChunkDefinition(chunk_timeline){
+
 				var timeline = [];
+
 				for (var i = 0; i < chunk_timeline.length; i++) {
 
+
 					var ct = chunk_timeline[i].chunk_type;
+
 					if(typeof ct !== 'undefined') {
 
 						if($.inArray(ct, ["linear", "while", "if"]) > -1){
@@ -429,19 +438,12 @@
 						// call function parameters if flagged evaluate_block = true
 						chunk_timeline[i].evaluate_block = (typeof chunk_timeline[i].evaluate_block === 'undefined') ? false : chunk_timeline[i].evaluate_block;
 						if (chunk_timeline[i].evaluate_block){
-								if (typeof chunk_timeline[i]['functions'] === 'undefined'){
-									chunk_timeline[i].functions = {};
-									var keys = Object.keys(chunk_timeline[i]);
-									for (var j = 0; j < keys.length; j++) {
-										if (typeof chunk_timeline[i][keys[j]] == "function") {
-											chunk_timeline[i]['functions'][keys[j]] = chunk_timeline[i][keys[j]];
-										}
-									}
+							var keys = Object.keys(chunk_timeline[i]);
+							for (var j = 0; j < keys.length; j++) {
+								if (typeof chunk_timeline[i][keys[j]] == "function") {
+									chunk_timeline[i][keys[j]] = chunk_timeline[i][keys[j]].call();
 								}
-								var funKeys = Object.keys(chunk_timeline[i].functions);
-								for (var j = 0; j < funKeys.length; j++){
-									chunk_timeline[i][funKeys[j]] = chunk_timeline[i].functions[funKeys[j]].call();
-								}
+							}
 						}
 
 						var trials = jsPsych[plugin_name].create(chunk_timeline[i]);
@@ -464,7 +466,7 @@
 						var repetitions = (typeof chunk_timeline[i].repetitions === 'undefined') ? 1 : chunk_timeline[i].repetitions;
 
 						for(var j = 0; j < repetitions; j++) {
-							timeline.push(createBlock(trials, randomize_order,chunk_timeline[i].evaluate_block));
+							timeline.push(createBlock(trials, randomize_order, chunk_timeline[i].evaluate_block));
 						}
 					}
 				}
@@ -476,7 +478,7 @@
 
 		}
 
-		function createBlock(trial_list, randomize_order, evaluateBlock) {
+		function createBlock(trial_list, randomize_order, eval_block) {
 
 			var block = {
 
@@ -486,7 +488,7 @@
 
 				type: 'block',
 
-				evaluate_block: evaluateBlock,
+				evaluate_block: eval_block,
 
 				randomize_order: randomize_order,
 
@@ -593,6 +595,10 @@
 
 		function finishExperiment() {
 			opts.on_finish(jsPsych.data.getData());
+			if (typeof root_chunk.endMessage != 'undefined'){
+				var display_element = jsPsych.getDisplayElement();
+				display_element.html(root_chunk.endMessage);
+			}
 		}
 
 		function doTrial(trial) {
@@ -671,6 +677,35 @@
 			dataProperties = $.extend({}, dataProperties, properties);
 		};
 
+		module.fromURL = function(){
+			// adapted from stackoverflow: http://stackoverflow.com/posts/12049737/revisions
+			var $_GET = {};
+			if(document.location.toString().indexOf('?') !== -1) {
+						var query = document.location
+													 .toString()
+													 .replace(/^.*?\?/, '')
+													 .replace(/#.*$/, '')
+													 .split('&');
+
+						for(var i=0, l=query.length; i<l; i++) {
+							 var aux = decodeURIComponent(query[i]).split('=');
+							 $_GET[aux[0]] = aux[1];
+						}
+				}
+				return $_GET
+		};
+
+		module.uniqueId = function(stringLength){
+			// adapted from http://stackoverflow.com/posts/10727155/revisions
+			var result = '';
+			var length = (typeof stringLength == 'undefined') ? 32 : stringLength;
+			var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+			for (var i = length; i > 0; --i){
+				result += chars[Math.round(Math.random() * (chars.length - 1))];
+			};
+			return result;
+		};
+
 		module.addDataToLastTrial = function(data){
 			if(allData.length == 0){
 				throw new Error("Cannot add data to last trial - no data recorded so far");
@@ -681,11 +716,6 @@
 		module.dataAsCSV = function() {
 			var dataObj = module.getData();
 			return JSON2CSV(dataObj);
-		};
-
-		module.dataAsJSON = function() {
-			var dataObj = module.getData();
-			return JSON.stringify(dataObj);
 		};
 
 		module.localSave = function(filename, format) {
@@ -1194,7 +1224,8 @@
 					held_keys.push(e.which);
 
 					parameters.callback_function({
-						key: e.which,
+						key_code: e.which,
+						key_string: keyCharacterLookup[e.which],
 						rt: key_time - start_time
 					});
 
@@ -1258,6 +1289,14 @@
 				code = keylookup[character];
 			}
 			return code;
+		}
+
+		module.convertKeyCodeToKeyCharacter = function(code){
+			var character;
+			if(typeof keylookup[code] !== 'undefined'){
+				character = keylookup[code];
+			}
+			return character;
 		}
 
 		// keycode lookup associative array
@@ -1381,6 +1420,101 @@
 			'[': 219,
 			'\\': 220,
 			']': 221
+		};
+
+		// keycode lookup associative array
+		var keyCharacterLookup = {
+			8:"backspace",
+			9:"tab",
+			13:"enter",
+			16:"shift",
+			17:"ctrl",
+			18:"alt",
+			19:"pause",
+			20:"capslock",
+			27:"esc",
+			32:"*space*",
+			33:"pageup",
+			34:"pagedown",
+			35:"end",
+			36:"home",
+			37:"leftarrow",
+			38:"uparrow",
+			39:"rightarrow",
+			40:"downarrow",
+			45:"insert",
+			46:"delete",
+			48:"0",
+			49:"1",
+			50:"2",
+			51:"3",
+			52:"4",
+			53:"5",
+			54:"6",
+			55:"7",
+			56:"8",
+			57:"9",
+			65:"A",
+			66:"B",
+			67:"C",
+			68:"D",
+			69:"E",
+			70:"F",
+			71:"G",
+			72:"H",
+			73:"I",
+			74:"J",
+			75:"K",
+			76:"L",
+			77:"M",
+			78:"N",
+			79:"O",
+			80:"P",
+			81:"Q",
+			82:"R",
+			83:"S",
+			84:"T",
+			85:"U",
+			86:"V",
+			87:"W",
+			88:"X",
+			89:"Y",
+			90:"Z",
+			96:"0numpad",
+			97:"1numpad",
+			98:"2numpad",
+			99:"3numpad",
+			100:"4numpad",
+			101:"5numpad",
+			102:"6numpad",
+			103:"7numpad",
+			104:"8numpad",
+			105:"9numpad",
+			106:"multiply",
+			107:"plus",
+			109:"minus",
+			110:"decimal",
+			111:"divide",
+			112:"F1",
+			113:"F2",
+			114:"F3",
+			115:"F4",
+			116:"F5",
+			117:"F6",
+			118:"F7",
+			119:"F8",
+			120:"F9",
+			121:"F10",
+			122:"F11",
+			123:"F12",
+			187:"=",
+			188:",",
+			190:".",
+			191:"/",
+			192:"`",
+			219:"[",
+			220:"\\",
+			221:"]"
 		};
 
 		module.evaluateFunctionParameters = function(trial, protect) {

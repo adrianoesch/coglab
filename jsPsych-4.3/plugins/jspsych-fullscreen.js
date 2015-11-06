@@ -7,65 +7,6 @@
 
 jsPsych['fullscreen'] = (function(){
 
-    function launchIntoFullscreen(element) {
-      if(element.requestFullscreen) {
-        element.requestFullscreen();
-      } else if(element.mozRequestFullScreen) {
-        element.mozRequestFullScreen();
-      } else if(element.webkitRequestFullscreen) {
-        element.webkitRequestFullscreen();
-      } else if(element.msRequestFullscreen) {
-        element.msRequestFullscreen();
-      }
-    };
-    function quitFullscreen(element) {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      }
-    };
-
-    function addFullScreenSurveillance(response){
-      if (!document.webkitIsFullScreen){
-        document.addEventListener('webkitfullscreenchange',function(){if(!document.webkitIsFullScreen){
-          placeholder(response)
-        }},false);
-      } else if (!document.mozFullScreen){
-        document.addEventListener('mozfullscreenchange',function(){if(!document.webkitIsFullScreen){
-          placeholder(response)
-        }},false);
-      } else if (!document.msFullscreenElement){
-        document.addEventListener('MSFullscreenChange',function(){if(!document.webkitIsFullScreen){
-          placeholder(response)
-        }},false);
-      } else if (!document.fullscreenchange){
-        document.addEventListener('fullscreenchange',function(){if(!document.webkitIsFullScreen){
-          placeholder(response)
-        }},false);
-      }
-    };
-
-    function placeholder(response){
-      response.call()
-    };
-
-    function removeFullScreenSurveillance(response){
-      if (document.webkitIsFullScreen !== null){
-        document.removeEventListener('webkitfullscreenchange',placeholder,false);
-      } else if (document.mozFullScreen !== null){
-        document.removeEventListener('mozfullscreenchange',placeholder(response),false);
-      } else if (document.msFullscreenElement !== null){
-        document.removeEventListener('MSFullscreenChange',placeholder(response),false);
-      } else if (document.fullscreenchange !== null){
-        document.removeEventListener('fullscreenchange',placeholder(response),false);
-      }
-    };
-
     var plugin = {};
 
     plugin.create = function(params){
@@ -75,30 +16,169 @@ jsPsych['fullscreen'] = (function(){
         trials[0].button = params.buttontext;
         trials[0].exit = params.exit || false;
         trials[0].buttonStyle = params.buttonStyle || "";
-        trials[0].on_abort = params.on_abort || null;
+        trials[0].on_fullscreen_abort = params.on_fullscreen_abort || null;
+        trials[0].on_hide_abort = params.on_hide_abort || null;
+        trials[0].on_launch_fail = params.on_launch_fail || null;
+        trials[0].on_hide_fail = params.on_hide_fail || null;
         return trials;
     }
 
     plugin.trial = function(display_element, trial){
-        display_element.html(trial.text);
 
-        display_element.append("<div style="+trial.buttonStyle+"><button id='jspsych-fullscreen-button'>" + trial.button + "</button></div>");
-        $('#jspsych-fullscreen-button').on('click',function(){
-            if (!trial.exit) {
+      function checkLaunch(){
+        if(typeof document.webkitIsFullScreen != 'boolean' && typeof document.mozFullScreen != 'boolean' && +
+        typeof document.msFullscreenElement != 'boolean' && typeof document.fullscreenchange != 'boolean'){
+          return false
+        }else{
+          return true
+        }
+      };
+
+      function launchIntoFullscreen(element) {
+        if(element.requestFullscreen){
+            element.requestFullscreen();
+          } else if(element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+          } else if(element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+          } else if(element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+          }
+      };
+      function quitFullscreen(element) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      };
+
+      function checkHide(){
+        if(typeof document.webkitHidden != 'boolean' && typeof document.mozHidden != 'boolean' && +
+        typeof document.msHidden != 'boolean' && typeof document.hidden != 'boolean'){
+          return false
+        }else{
+          return true
+        }
+      };
+
+      function addHiddenSurveillance(){
+          if (document.webkitHidden != 'undefined'){
+            document.addEventListener('webkitvisibilitychange',hideFail,false);
+          }else if (typeof document.mozHidden != 'undefined'){
+            document.addEventListener('mozvisibilitychange',hideFail,false);
+          }else if (typeof document.msHidden != 'undefined'){
+            document.addEventListener('msvisibilitychange',hideFail,false);
+          }else if (typeof document.hidden != 'undefined'){
+            document.addEventListener('visibilitychange',hideFail,false);
+          }
+      };
+
+      function removeHideSurveillance(){
+          document.removeEventListener('webkitvisibilitychange',hideFail,false);
+          document.removeEventListener('mozvisibilitychange',hideFail,false);
+          document.removeEventListener('msvisibilitychange',hideFail,false);
+          document.removeEventListener('visibilitychange',hideFail,false);
+      };
+
+      response2 = trial.on_hide_abort
+
+      function hideFail(){
+        if (document.webkitHidden){
+          response2();
+        }else if (document.mozHidden){
+          response2();
+        }else if (document.msHidden){
+          response2();
+        }else if (document.hidden){
+          response2();
+        };
+      };
+
+      function addFullScreenSurveillance(fullScreenFail){
+          if (!document.webkitIsFullScreen && typeof document.webkitIsFullScreen != 'undefined'){
+            document.addEventListener('webkitfullscreenchange',fullScreenFail,false);
+          }else if (!document.mozFullScreen && typeof document.mozFullScreen != 'undefined'){
+            document.addEventListener('mozfullscreenchange',fullScreenFail,false);
+          }else if (!document.msFullscreenElement && typeof document.msFullscreenElement != 'undefined'){
+            document.addEventListener('MSFullscreenChange',fullScreenFail,false);
+          }else if (!document.fullscreenchange && typeof document.fullscreenchange != 'undefined'){
+            document.addEventListener('fullscreenchange',fullScreenFail,false);
+          }
+      };
+
+      function removeFullScreenSurveillance(){
+        // if (document.webkitIsFullScreen){
+          document.removeEventListener('webkitfullscreenchange',fullScreenFail);
+        // } else if (document.mozFullScreen){
+          document.removeEventListener('mozfullscreenchange',fullScreenFail);
+        // } else if (document.msFullscreenElement){
+          document.removeEventListener('MSFullscreenChange',fullScreenFail);
+        // } else if (document.fullscreenchange){
+          document.removeEventListener('fullscreenchange',fullScreenFail);
+        // }
+      };
+
+      response = trial.on_fullscreen_abort
+
+      function fullScreenFail(){
+        if (!document.webkitIsFullScreen && typeof document.webkitIsFullScreen != 'undefined'){
+          response();
+        }else if (!document.mozFullScreen && typeof document.mozFullScreen != 'undefined'){
+          response();
+        }else if (!document.msFullscreenElement && typeof document.msFullscreenElement != 'undefined'){
+          response();
+        }else if (!document.fullscreenchange && typeof document.fullscreenchange != 'undefined'){
+          response();
+        }
+      };
+
+      display_element.html(trial.text);
+      display_element.append("<div style="+trial.buttonStyle+"><button id='jspsych-fullscreen-button'>" + trial.button + "</button></div>");
+
+      $('#jspsych-fullscreen-button').on('click',function(){
+          if (trial.exit) {
+            removeFullScreenSurveillance()
+            removeHideSurveillance()
+            fullScreenFail = null;
+            hideFail = null;
+            response = null;
+            response2 = null
+            quitFullscreen(document.documentElement);
+          }else{
+            if (checkLaunch()){
               launchIntoFullscreen(document.documentElement);
-              if (typeof trial.on_abort !== 'undefined'){
-                if (typeof trial.on_abort !== 'function'){
+              if (typeof trial.on_fullscreen_abort != 'undefined'){
+                if (typeof trial.on_fullscreen_abort != 'function'){
                   console.error('jspsych-fullscreen response parameter is not a function.');
                 }else{
-                  window.setTimeout(addFullScreenSurveillance(trial.on_abort),10);
+                  addFullScreenSurveillance(fullScreenFail);
                 }
               }
-            } else {
-              quitFullscreen(document.documentElement);
-              removeFullScreenSurveillance();
-            };
-            display_element.html('');
-            jsPsych.finishTrial();
+            }else{
+              trial.on_launch_fail()
+            }
+            if(checkHide()){
+              launchIntoFullscreen(document.documentElement);
+              if (typeof trial.on_hide_fail != 'undefined'){
+                if (typeof trial.on_hide_fail != 'function'){
+                  console.error('jspsych-fullscreen response parameter is not a function.');
+                }else{
+                  addHiddenSurveillance(hideFail);
+                }
+              }
+            }else{
+              if (typeof trial.on_hide_fail != 'undefined'){
+                trial.on_hide_fail()
+              }
+            }
+          }
+          display_element.html('');
+          jsPsych.finishTrial();
         });
     }
 

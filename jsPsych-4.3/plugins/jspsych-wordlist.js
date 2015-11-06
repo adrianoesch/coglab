@@ -23,7 +23,6 @@
 				trials[i].item = params.items[i];
 				trials[i].style = params.style;
 				trials[i].color = params.colors[i];
-				trials[i].choices = params.choices || [];
 				trials[i].response_ends_trial = (typeof params.response_ends_trial === 'undefined') ? true : params.response_ends_trial;
 				// timing parameters
 				trials[i].timing_stim = params.timing_stim || -1; // if -1, then show indefinitely
@@ -78,9 +77,12 @@
 				var trial_data = {
 					"rt": response.rt,
 					"text": trial.item.text,
+					"word_id": trial.item.word_id,
 					"color": trial.color,
 					"size_difference" : trial.item.size_difference,
-					"key_press": response.key
+					"binary_size": 0 ? trial.item.size_difference > 0 : 1,
+					"key_code": response.key_code,
+					"key_string": response.key_string
 				};
 
 				jsPsych.data.write(trial_data);
@@ -113,10 +115,11 @@
 			if(JSON.stringify(trial.choices) != JSON.stringify(["none"])) {
 				var keyboardListener = jsPsych.pluginAPI.getKeyboardResponse({
 					callback_function: after_response,
-					valid_responses: trial.choices,
+					valid_responses: [37,39],
 					rt_method: 'date',
 					persist: false,
-					allow_held_key: false
+					allow_held_key: false,
+
 				});
 			}
 
@@ -127,6 +130,12 @@
 					end_trial();
 				}, trial.timing_response);
 				setTimeoutHandlers.push(t2);
+			}
+			if (trial.timing_stim > 0) {
+				var t3 = setTimeout(function() {
+					display_element.html('');
+				}, trial.timing_stim);
+				setTimeoutHandlers.push(t3);
 			}
 
 		};
