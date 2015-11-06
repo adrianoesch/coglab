@@ -6,7 +6,7 @@
         <script src="../jsPsych-4.3/jquery.min.js"></script>
         <script src="../jsPsych-4.3/jspsych.js"></script>
         <script src="../jsPsych-4.3/plugins/jspsych-text.js"></script>
-        <script src="../jsPsych-4.3/plugins/jspsych-single-stim.js"></script>
+        <script src="../jsPsych-4.3/plugins/jspsych-single-stim-ao.js"></script>
         <script src="../jsPsych-4.3/plugins/jspsych-wordlist.js"></script>
         <script src="../jsPsych-4.3/plugins/jspsych-fullscreen.js"></script>
         <script src="../jsPsych-4.3/plugins/jspsych-response-table.js"></script>
@@ -23,6 +23,10 @@
       var getVars = jsPsych.data.fromURL();
       var subjectID = 'hans_wurst';
       var uniqueId = jsPsych.data.uniqueId();
+      var screen_width = screen.width;
+      var screen_height = screen.height;
+      var centerX = screen_width*0.5
+      var centerY = screen_height*0.5
 
       getVars.type = 'fromURL';
       jsPsych.data.addProperties(getVars);
@@ -50,8 +54,8 @@
             string = "<p style='text-align:center;'>You were not supposed to switch tabs or applications during the experiment.<br>This session is was terminated.</p>";
             jsPsych.finishTrial();
             jsPsych.endExperiment(string);
-      },
-        on_launch_fail: function(){
+          },
+          on_launch_fail: function(){
             jsPsych.finishTrial();
             string = "<p>Your Browser doesn't allow launching into fullscreen. Please update your Browser or use another one for this experiment. We recommend using Chrome or Firefox.</p>";
             jsPsych.endExperiment(string);
@@ -62,6 +66,7 @@
             jsPsych.endExperiment(string);
           }
       }
+
         /* define instructions block */
         var instructions_block = {
           type: "text",
@@ -69,25 +74,41 @@
           timing_post_trial: 2000
         };
 
-        /* prepare word blocks */
-        var screen_width = screen.width;
-        var screen_height = screen.height;
-        var centerX = screen_width*0.5
-        var centerY = screen_height*0.5
-        var fullScreenDiv_style = "position:absolute;left:0;top:0;height:"+screen_height+"px;width:"+screen_width+"px;";
-        var crossTable =  "<table align='center' style='margin-top:"+(centerY-120)+"px;text-align:center;font-weight:bold;font-size:100px;border-collapse:collapse;'>"+
-                          "<tr><td style='height:100px;width:100px;border-right:4px solid black;border-bottom:4px solid black;'/>"+
-                          "<td style='height:100px;width:100px;border-left:4px solid black;border-bottom:4px solid black;'/></tr>"+
-                          "<tr><td style='height:100px;width:100px;border-right:4px solid black;border-top:4px solid black;'/>"+
-                          "<td style='height:100px;width:100px;border-left:4px solid black;border-top:4px solid black;'/></tr></table>";
-        var centeredCross = "<div style='"+fullScreenDiv_style+"'>"+crossTable+"</div>"
 
-        var cross_center = {
+        // var crossTable =  "<table align='center' style='margin-top:"+(centerY-120)+"px;text-align:center;font-weight:bold;font-size:100px;border-collapse:collapse;'>"+
+        //                   "<tr><td style='height:100px;width:100px;border-right:4px solid black;border-bottom:4px solid black;'/>"+
+        //                   "<td style='height:100px;width:100px;border-left:4px solid black;border-bottom:4px solid black;'/></tr>"+
+        //                   "<tr><td style='height:100px;width:100px;border-right:4px solid black;border-top:4px solid black;'/>"+
+        //                   "<td style='height:100px;width:100px;border-left:4px solid black;border-top:4px solid black;'/></tr></table>";
+        //
+
+        function getCrossTable(linelength){
+            var table = "<table algin='center' style='border-collapse:collapse;text-algin:center;position:relative;top:"+(screen.height*.5-linelength).toString()+"px;'>"
+
+            tdStyles = ["height:"+linelength+"px;width:"+linelength+"px;border-right:4px solid black;border-bottom:4px solid black;",
+                        "height:"+linelength+"px;width:"+linelength+"px;border-left:4px solid black;border-bottom:4px solid black;",
+                        "height:"+linelength+"px;width:"+linelength+"px;border-right:4px solid black;border-top:4px solid black;",
+                        "height:"+linelength+"px;width:"+linelength+"px;border-left:4px solid black;border-top:4px solid black;"]
+
+            for (i=0;i<2;i++){
+              table += "<tr>"
+              for(j=0;j<2;j++){
+                idx = (i*2)+(j)
+                table += "<td style='"+tdStyles[idx]+"'/>"
+              }
+              table += "</tr>"
+            }
+            table += "</table"
+            return table
+        }
+
+
+        var cross_block = {
             type: 'single-stim',
-            stimuli: centeredCross,
+            stimuli: getCrossTable(100),
             is_html: true,
             timing_post_trial: 0,
-            timing_response: 500,
+            timing_response: 50000,
             response_ends_trial: false
         }
         var empty_block = {
@@ -203,7 +224,7 @@
         var chunkIdx=0;
         var chunk = {
             chunk_type: 'while',
-            timeline: [cross_center, word_presentation, response_table, empty_block],
+            timeline: [cross_block, word_presentation, response_table, empty_block],
             // timeline: [ word_presentation, response_table],
             continue_function: function(){
             if (chunkIdx==2){
@@ -217,14 +238,22 @@
 
         /* create experiment definition array */
         var experiment = [];
-        experiment.push(activate_fullscreen);
-        experiment.push(instructions_block);
-        experiment.push(chunk);
-        experiment.push(end_fullscreen);
+        // experiment.push(activate_fullscreen);
+        // experiment.push(instructions_block);
+        experiment.push(cross_block);
+        // experiment.push(chunk);
+        // experiment.push(end_fullscreen);
 
+        //create default display element and style classes
+        var fsDiv = document.createElement('div')
+        fsDiv.id = "fsDiv";
+        fsDiv.style.height = screen_height;
+        fsDiv.style.width = screen_width;
+        $('body').append(fsDiv)
 
         /* start the experiment */
         jsPsych.init({
+          display_element: $('#fsDiv'),
           experiment_structure: experiment,
           // on_finish: function(data){ saveData(subjectID,experiment_name, jsPsych.data.dataAsCSV(), jsPsych.data.dataAsJSON()) }
           on_finish: function() {jsPsych.data.displayData('JSON')}

@@ -9,25 +9,25 @@
  **/
 
 (function($) {
-	jsPsych["wordlist"] = (function() {
+	jsPsych["single-stim-ao"] = (function() {
 
 		var plugin = {};
 
 		plugin.create = function(params) {
 
-			params = jsPsych.pluginAPI.enforceArray(params, ['items', 'choices']);
+			params = jsPsych.pluginAPI.enforceArray(params, ['stimuli', 'choices']);
 
-			var trials = new Array(params.items.length);
+			var trials = new Array(params.stimuli.length);
 			for (var i = 0; i < trials.length; i++) {
 				trials[i] = {};
-				trials[i].item = params.items[i];
-				trials[i].style = params.style;
-				trials[i].color = params.colors[i];
+				trials[i].a_path = params.stimuli[i];
+				trials[i].choices = params.choices || [];
 				trials[i].response_ends_trial = (typeof params.response_ends_trial === 'undefined') ? true : params.response_ends_trial;
 				// timing parameters
 				trials[i].timing_stim = params.timing_stim || -1; // if -1, then show indefinitely
 				trials[i].timing_response = params.timing_response || -1; // if -1, then wait for response forever
 				// optional parameters
+				trials[i].prompt = (typeof params.prompt === 'undefined') ? "" : params.prompt;
 			}
 			return trials;
 		};
@@ -39,17 +39,19 @@
 			// if any trial variables are functions
 			// this evaluates the function and replaces
 			// it with the output of the function
-			var colorDic = {'red':'#FF0000','blue':'#0000FF'};
+			trial = jsPsych.pluginAPI.evaluateFunctionParameters(trial);
 
 			// this array holds handlers from setTimeout calls
 			// that need to be cleared if the trial ends early
 			var setTimeoutHandlers = [];
 
 			// display stimulus
-			display_element.append($('<div>', {
-					text: trial.item.text,
-					style: trial.style+'color:'+colorDic[trial.color]+';'
-				}));
+			display_element.append(trial.a_path);
+
+			//show prompt if there is one
+			if (trial.prompt !== "") {
+				display_element.append(trial.prompt);
+			}
 
 			// store response
 			var response = {rt: -1, key: -1};
@@ -70,13 +72,8 @@
 				// gather the data to store for the trial
 				var trial_data = {
 					"rt": response.rt,
-					"text": trial.item.text,
-					"word_id": trial.item.word_id,
-					"color": trial.color,
-					"size_difference" : trial.item.size_difference,
-					"binary_size": 0 ? trial.item.size_difference > 0 : 1,
-					"key_code": response.key_code,
-					"key_string": response.key_string
+					"stimulus": trial.a_path,
+					"key_press": response.key
 				};
 
 				jsPsych.data.write(trial_data);
@@ -109,14 +106,20 @@
 			if(JSON.stringify(trial.choices) != JSON.stringify(["none"])) {
 				var keyboardListener = jsPsych.pluginAPI.getKeyboardResponse({
 					callback_function: after_response,
-					valid_responses: [37,39],
+					valid_responses: trial.choices,
 					rt_method: 'date',
 					persist: false,
-					allow_held_key: false,
-
+					allow_held_key: false
 				});
 			}
 
+			// hide image if timing is set
+			if (trial.timing_stim > 0) {
+				var t1 = setTimeout(function() {
+					$('#jspsych-single-stim-stimulus').css('visibility', 'hidden');
+				}, trial.timing_stim);
+				setTimeoutHandlers.push(t1);
+			}
 
 			// end trial if time limit is set
 			if (trial.timing_response > 0) {
@@ -124,12 +127,6 @@
 					end_trial();
 				}, trial.timing_response);
 				setTimeoutHandlers.push(t2);
-			}
-			if (trial.timing_stim > 0) {
-				var t3 = setTimeout(function() {
-					display_element.html('');
-				}, trial.timing_stim);
-				setTimeoutHandlers.push(t3);
 			}
 
 		};

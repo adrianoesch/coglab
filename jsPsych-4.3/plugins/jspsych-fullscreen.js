@@ -137,8 +137,9 @@ jsPsych['fullscreen'] = (function(){
         }
       };
 
-      display_element.html(trial.text);
-      display_element.append("<div style="+trial.buttonStyle+"><button id='jspsych-fullscreen-button'>" + trial.button + "</button></div>");
+      $('#fsDiv').append("<div id='text-container' class='jspsych-display-element'>")
+      $('#text-container').append(trial.text)
+      $('#text-container').append("<div style="+trial.buttonStyle+"><button id='jspsych-fullscreen-button'>" + trial.button + "</button></div>");
 
       $('#jspsych-fullscreen-button').on('click',function(){
           if (trial.exit) {

@@ -71,7 +71,7 @@
 			DOM_target = opts.display_element;
 
 			// add CSS class to DOM_target
-			DOM_target.addClass('jspsych-display-element');
+			// DOM_target.addClass('jspsych-display-element');
 
 			// create experiment structure
 			root_chunk = parseExpStructure(opts.experiment_structure);

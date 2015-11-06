@@ -50,12 +50,10 @@
 			if (!trial.is_html) {
 				display_element.append($('<img>', {
 					src: trial.a_path,
-					id: 'jspsych-single-stim-stimulus'
 				}));
 			} else {
 				display_element.append($('<div>', {
 					html: trial.a_path,
-					id: 'jspsych-single-stim-stimulus'
 				}));
 			}
 
