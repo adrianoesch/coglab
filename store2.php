@@ -13,7 +13,7 @@ $openshift_data_dir = $_ENV["OPENSHIFT_DATA_DIR"];
 file_put_contents($openshift_data_dir.'json/'.uniqid().'.txt', $jsonData);
 
 // then put csvStrings in experiment folder.
-if(!file_exists($openshift_data_dir.'csv/'.$folder.'/')){ mkdir('data/'.$folder.'/',0777,true);}
+if(!file_exists($openshift_data_dir.'csv/'.$folder.'/')){ mkdir($openshift_data_dir.'csv/'.$folder.'/',0777,true);}
 for ($i = 0; $i < sizeof($csvData); $i++) {
       file_put_contents($openshift_data_dir.'csv/'.$folder.'/'.$subjectID.'_'.$i.'.csv', $csvData[$i]);
 }
