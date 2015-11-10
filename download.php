@@ -62,7 +62,9 @@ if ($_GET['zip']=="True"){
 
 ?>
 <html><h1>Downloads</h1>
-<ul><li><?php print_r($filePaths);?></li></ul>
+<ul>
+<?php foreach ($filePaths as $item){ echo "<li>".$item."</a>"}; ?>
+</ul>
 <?php
 if($_GET['zip']=="True"){
 echo "<h3><a href='data.zip'>Download as Zip</a></h3>";
