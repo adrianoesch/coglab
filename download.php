@@ -59,7 +59,6 @@ $filePaths = array_map('addPaths',$filesChecked);
 if ($_GET['zip']=="True"){
 	create_zip($filePaths,'data.zip',true);
 };
-print_r($filePaths)
 ?>
 <html><h1>Downloads</h1>
 
