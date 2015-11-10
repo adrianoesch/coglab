@@ -44,7 +44,7 @@ function create_zip($files = array(),$destination = '',$overwrite = false) {
 $folder = $_GET['folder'];
 $openshift_data_dir = $_ENV["OPENSHIFT_DATA_DIR"];
 $zip = $_GET['zip'];
-$files = array_diff(scandir($openshift_data_dir.'/'.$folder), array('..', '.'));
+$files = array_diff(scandir($openshift_data_dir.$folder), array('..', '.'));
 
 function check($fileStr){
 	if(substr($fileStr,0,1)=="."){return false;}else{
@@ -54,7 +54,7 @@ function check($fileStr){
 $filesChecked = array_filter($files,'check');
 
 function addPaths($fileStr){
-	return $_ENV["OPENSHIFT_DATA_DIR"].'/'.$_GET['folder'].'/'.$fileStr;
+	return $_ENV["OPENSHIFT_DATA_DIR"].$_GET['folder'].'/'.$fileStr;
 }
 $filePaths = array_map('addPaths',$filesChecked);
 
