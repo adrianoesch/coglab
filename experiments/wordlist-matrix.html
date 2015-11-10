@@ -207,7 +207,7 @@
             timeline: [cross_block, word_presentation, response_table, empty_block],
             // timeline: [ word_presentation, response_table],
             continue_function: function(){
-            if (chunkIdx==0){
+            if (chunkIdx==2){
               return false
             }else{
               chunkIdx+=1
@@ -218,9 +218,9 @@
 
         /* create experiment definition array */
         var experiment = [];
-        // experiment.push(activate_fullscreen);
+        experiment.push(activate_fullscreen);
         experiment.push(chunk);
-        // experiment.push(end_fullscreen);
+        experiment.push(end_fullscreen);
 
         //create default display element and style classes
         var fsDiv = "<div id='fsDiv' style='text-algin:center;position:absolute;height:"+screen_height.toString()+"px;width:"+screen_width.toString()+"px;'></div>";
