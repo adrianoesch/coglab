@@ -56,7 +56,13 @@ function addPaths($fileStr){
 }
 $filePaths = array_map('addPaths',$filesChecked);
 
+if ($_GET['zip']=="True"){
+	create_zip($files = $filePaths,$destination = 'data.zip',$overwrite = true)
+}
+
 ?>
 <html><h1>Downloads</h1>
 <ul><li><?php print_r($filePaths);?></li></ul>
+<h2>Zip:</h2>
+<ul><a href="data.zip">download</a></ul>
 </html>
