@@ -52,17 +52,20 @@ function check($fileStr){
 $filesChecked = array_filter($files,'check');
 
 function addPaths($fileStr){
-	return $folder.'/'.$fileStr;
+	return $_GET['folder'].'/'.$fileStr;
 }
 $filePaths = array_map('addPaths',$filesChecked);
 
 if ($_GET['zip']=="True"){
-	create_zip($filePaths,'data.zip',true)
-}
+	create_zip($filePaths,'data.zip',true);
+};
 
 ?>
 <html><h1>Downloads</h1>
 <ul><li><?php print_r($filePaths);?></li></ul>
-<h2>Zip:</h2>
-<ul><a href="data.zip">download</a></ul>
+<?php
+if($_GET['zip']=="True"){
+echo "<h3><a href='data.zip'>Download as Zip</a></h3>";
+};
+?>
 </html>
