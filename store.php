@@ -14,9 +14,6 @@ file_put_contents('JSON/'.uniqid().'.txt', $jsonData);
 // then put csvStrings in experiment folder.
 if(!file_exists('data/'.$folder.'/')){ mkdir('data/'.$folder.'/',0777,true);}
 for ($i = 0; $i < sizeof($csvData); $i++) {
-      file_put_contents('data/'.$folder.'/'.$subjectID.'_'.$i.'.csv', $csvData);
+      file_put_contents('data/'.$folder.'/'.$subjectID.'_'.$i.'.csv', $csvData[$i]);
 }
-
-
-
 ?>

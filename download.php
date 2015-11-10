@@ -59,10 +59,10 @@ $filePaths = array_map('addPaths',$filesChecked);
 if ($_GET['zip']=="True"){
 	create_zip($filePaths,'data.zip',true);
 };
-
+print_r($filePaths)
 ?>
 <html><h1>Downloads</h1>
-print_r($filePaths)
+
 <ul>
 <?php foreach($filePaths as $item){ echo "<li>".$item."</li>";} ?>
 </ul>

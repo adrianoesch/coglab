@@ -22,19 +22,15 @@
       var url = document.location.toString();
       var experiment_name =  url.split('/')[url.split('/').length-1].split('.')[0];
       var getVars = jsPsych.data.fromURL();
-      var subjectID = 'hans_wurst';
       var uniqueId = jsPsych.data.uniqueId();
       var screen_width = screen.width;
       var screen_height = screen.height;
       var centerX = screen_width*0.5
       var centerY = screen_height*0.5
 
-      getVars.type = 'fromURL';
       jsPsych.data.addProperties(getVars);
       jsPsych.data.addProperties({
-        type: 'general',
         experiment_name: experiment_name,
-        subjectID: subjectID,
         uniqueId: uniqueId
       });
 
