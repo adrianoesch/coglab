@@ -58,5 +58,5 @@ $filePaths = array_map('addPaths',$filesChecked);
 
 ?>
 <html><h1>Downloads</h1>
-<ul><?php print_r($filePaths);?></ul>
+<ul><li><?php print_r($filePaths);?></li></ul>
 </html>
