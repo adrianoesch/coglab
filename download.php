@@ -57,7 +57,7 @@ function addPaths($fileStr){
 $filePaths = array_map('addPaths',$filesChecked);
 
 if ($_GET['zip']=="True"){
-	create_zip($files = $filePaths,$destination = 'data.zip',$overwrite = true)
+	create_zip($filePaths,'data.zip',true)
 }
 
 ?>
