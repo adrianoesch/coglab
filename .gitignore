@@ -1,4 +1,4 @@
 data/
-JSON/
 data/**/*.csv
+JSON/
 JSON/**/*.txt
