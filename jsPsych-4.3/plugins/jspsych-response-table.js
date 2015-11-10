@@ -49,7 +49,7 @@
      // prepare end function
      var endTrial = function(){
        trial_data = {
-         "words_presented":trial.words,
+         "words_presented" :trial.words,
          "rt": JSON.stringify(responseTimes),
          "location": JSON.stringify(responseLocation),
          "text": JSON.stringify(responseContent)
@@ -71,22 +71,19 @@
      display_element.html(response_table);
      $(".teAc").mouseenter(function(){$(this).css("background", "rgb(180,180,180)")});
      $(".teAc").mouseleave(function(){$(this).css("background", "")});
-     $(".teAc").click(function(e) {
-       var that = this
-       $(that).css("background", "red");
-       setTimeout(function(){
-         $(that).css("background", "rgb(180,180,180)")},100);
-      });
 
     // and start listening and recording
      idx = 0;
      t0 = Date.now();
      $(".teAc").click(function(event){
        t1 = Date.now();
-       if (event.target.className=='teIn'){return};
        responseTimes.push(t1-t0);
        responseContent.push(event.target.textContent);
        responseLocation.push(event.target.id);
+       var that = this
+       $(that).css("background", "red");
+       setTimeout(function(){
+         $(that).css("background", "rgb(180,180,180)")},100);
        t0=t1;
        if (idx==4){endTrial()}
        idx+=1;

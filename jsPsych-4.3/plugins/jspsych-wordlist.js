@@ -113,7 +113,6 @@
 					rt_method: 'date',
 					persist: false,
 					allow_held_key: false,
-
 				});
 			}
 
