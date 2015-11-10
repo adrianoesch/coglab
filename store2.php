@@ -7,14 +7,14 @@ $subjectID = $_POST['subjectID'];
 $folder = $_POST['folder'];
 $csvData = $_POST['csvStrings'];
 $jsonData = $_POST['dataAsJSON'];
-$openshift_data_dir = $_ENV["OPENSHIFT_DATA_DIR"]
+$openshift_data_dir = $_ENV["OPENSHIFT_DATA_DIR"];
 
 //at first, write a backup copy of the json file into backup folder
-file_put_contents($openshift_data_dir.'JSON/'.uniqid().'.txt', $jsonData);
+file_put_contents($openshift_data_dir.'json/'.uniqid().'.txt', $jsonData);
 
 // then put csvStrings in experiment folder.
-if(!file_exists($openshift_data_dir.'data/'.$folder.'/')){ mkdir('data/'.$folder.'/',0777,true);}
+if(!file_exists($openshift_data_dir.'csv/'.$folder.'/')){ mkdir('data/'.$folder.'/',0777,true);}
 for ($i = 0; $i < sizeof($csvData); $i++) {
-      file_put_contents($openshift_data_dir.'data/'.$folder.'/'.$subjectID.'_'.$i.'.csv', $csvData[$i]);
+      file_put_contents($openshift_data_dir.'csv/'.$folder.'/'.$subjectID.'_'.$i.'.csv', $csvData[$i]);
 }
 ?>
