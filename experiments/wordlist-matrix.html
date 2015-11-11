@@ -71,7 +71,7 @@
       /* define instructions block */
       var instructions_block = {
         type: "text",
-        text: "<p style='margin-top:150px;text-align:center;'>Bli bla blo blu ... Press a key.</p>",
+        text: "<p style='margin-top:200px;text-align:center;'>Instructions.<br><br> Press any key to continue.</p>",
         timing_response: -1
       };
 
@@ -219,6 +219,7 @@
         /* create experiment definition array */
         var experiment = [];
         experiment.push(activate_fullscreen);
+        experiment.push(instructions_block);
         experiment.push(chunk);
         experiment.push(end_fullscreen);
 
