@@ -13,6 +13,7 @@
         <script src="../jsPsych-4.3/plugins/jspsych-response-table.js"></script>
         <script src="../jsPsych-4.3/plugins/jspsych-save-get-vars.js"></script>
         <script src="./words.js"></script>
+        <script src="./texts.js"></script>
         <link href="../jsPsych-4.3/css/jspsych.css" rel="stylesheet" type="text/css"></link>
     </head>
     <body>
@@ -34,45 +35,50 @@
         uniqueId: uniqueId
       });
 
+      var errStyle = "color:red;margin-top:200px;text-align:center;font-weight:bold;";
+      function getPar(str,style){
+        if (typeof style == "undefined"){
+          style='';
+        }
+        return "<div class='jspsych-display-element'><p style='"+style+"'>"+str+"</p><div>"
+      }
+
       // prepare structures
       var activate_fullscreen = {
           type: 'fullscreen',
-          showtext: '<p style="padding-top: 50px; text-align: center;">Welcome <br><br> Please continue to enter into full screen mode.<br><br>',
+          showtext: texts.warning,
           buttonStyle : 'float:right;',
           buttontext: "Enter",
           on_fullscreen_abort: function(){
-            // jAlert('','Fullscreen Failure')
-            errStyle = "color:red;margin-top:200px;text-align:center;font-weight:bold;";
-            string = "<p style='"+errStyle+"'>You were not supposed to end fullscreen mode. <br>The session was terminated.</p>";
             jsPsych.finishTrial();
-            jsPsych.endExperiment(string);
+            jsPsych.endExperiment(getPar(texts.fullscreen_exit,errStyle));
         },
           on_hide_abort:function(){
-            // jAlert('','Visibility Failure')
-            errStyle = "color:red;margin-top:200px;text-align:center;font-weight:bold;";
-            string = "<p style='"+errStyle+"'>You were not supposed to switch tabs or applications during the experiment.<br>The session was terminated.</p>";
             jsPsych.finishTrial();
-            jsPsych.endExperiment(string);
+            jsPsych.endExperiment(getPar(texts.visibility_exit,errStyle));
           },
           on_launch_fail: function(){
             jsPsych.finishTrial();
-            errStyle = "margin-top:200px;text-align:center;font-weight:bold;";
-            string = "<p style='"+errStyle+"'>Your Browser doesn't allow launching into fullscreen. Please update your Browser or use another one for this experiment. We recommend using Chrome or Firefox.</p>";
-            jsPsych.endExperiment(string);
+            jsPsych.endExperiment(getPar(texts.fullscreen_fail,errStyle));
           },
           on_hide_fail:function(){
             jsPsych.finishTrial();
-            errStyle = "margin-top:200px;text-align:center;font-weight:bold;";
-            string = "<p style='"+errStyle+"'>Your Browser doesn't allow checking the browser's visibility. Please update your browser or use another one for this experiment. We recommend using Chrome or Firefox.</p>";
-            jsPsych.endExperiment(string);
+            jsPsych.endExperiment(getPar(texts.visibility_fail,errStyle));
           }
       }
 
-      /* define instructions block */
+      var consent_block = {
+        type: "text",
+        text: getPar(texts.informed_consent,'margin-top:150px;'),
+        timing_response: -1,
+        cont_key: "rightarrow"
+      };
+
       var instructions_block = {
         type: "text",
-        text: "<p style='margin-top:200px;text-align:center;'>Instructions.<br><br> Press any key to continue.</p>",
-        timing_response: -1
+        text: getPar(texts.instructions1,'margin-top:50px;'),
+        timing_response: -1,
+        cont_key: "rightarrow"
       };
 
       function getCrossTable(linelength){
@@ -129,7 +135,7 @@
             type: 'wordlist',
             items: items_func,
             colors: colors_func,
-            style: "position:relative;top:"+(centerY-50).toString()+"px;text-align:center;"+
+            style: "position:relative;top:"+(centerY-25).toString()+"px;text-align:center;"+
                           "font-weight:bold;font-size:100px;",
             timing_stim: 2000,
             timing_response: 2500,
@@ -188,68 +194,89 @@
         tableStyle: "position:relative;margin: 0 auto; top:"+(centerY-150).toString()+"px;"
       }
 
+      var trialIdx=1;
+      var trial_chunk = {
+          chunk_type: 'while',
+          timeline: [cross_block, word_presentation, response_table, empty_block],
+          // timeline: [ word_presentation, response_table],
+          continue_function: function(){
+          if (trialIdx==2){
+            return false
+          }else{
+            trialIdx+=1
+            return true
+          }
+        }
+      };
+
+      var testIdx=1;
+      var test_chunk = {
+          chunk_type: 'while',
+          timeline: [cross_block, word_presentation, response_table, empty_block],
+          // timeline: [ word_presentation, response_table],
+          continue_function: function(){
+          if (testIdx==12){
+            return false
+          }else{
+            testIdx+=1
+            return true
+          }
+        }
+      };
+
       var end_fullscreen = {
           type: 'fullscreen',
-          showtext: '<p style="padding-top: 50px; text-align: center;">Thank you for participating!<br><br> Please save your responses before you close the window.',
+          showtext: getPar(texts.end_fullscreen),
           buttonStyle : 'float:right;',
           buttontext: "Save & Exit",
-          exit: true
-      }
-
-        var save_get_block = {
-            type: 'save-get-vars',
-            all: true
-          }
-
-        var chunkIdx=0;
-        var chunk = {
-            chunk_type: 'while',
-            timeline: [cross_block, word_presentation, response_table, empty_block],
-            // timeline: [ word_presentation, response_table],
-            continue_function: function(){
-            if (chunkIdx==2){
-              return false
-            }else{
-              chunkIdx+=1
-              return true
-            }
-          }
-        };
-
-        /* create experiment definition array */
-        var experiment = [];
-        experiment.push(activate_fullscreen);
-        experiment.push(instructions_block);
-        experiment.push(chunk);
-        experiment.push(end_fullscreen);
-
-        //create default display element and style classes
-        var fsDiv = "<div id='fsDiv' style='text-algin:center;position:absolute;height:"+screen_height.toString()+"px;width:"+screen_width.toString()+"px;'></div>";
-        $('body').append(fsDiv)
-
-        function saveData(subjectID,experiment_name,csvStrings,dataAsJSON){
-         $.ajax({
-            type: 'post',
-            cache: false,
-            url: '../store2.php', // this is the path to the above PHP script
-            data: {subjectID: subjectID, folder: experiment_name, csvStrings: csvStrings, dataAsJSON:dataAsJSON}
-         });
-        }
-
-        function getCsvStrings(){
-          csvStrings = [];
-          csvStrings.push(jsPsych.data.dataOfTypeAsCSV('wordlist'));
-          csvStrings.push(jsPsych.data.dataOfTypeAsCSV('response-table'));
-          return csvStrings
-        }
-
-        /* start the experiment */
-        jsPsych.init({
-          display_element: $('#fsDiv'),
-          experiment_structure: experiment,
+          exit: true,
           on_finish: function(data){
+            alert('save')
             saveData(uniqueId,experiment_name, getCsvStrings(data), jsPsych.data.dataAsJSON())
           }
-        });
-      </script>
+      }
+
+      var debriefing_block = {
+        type: "text",
+        text: getPar(texts.debriefing),
+        timing_response: -1,
+        cont_key:''
+      };
+
+      //create default display element and style classes
+      var fsDiv = "<div id='fsDiv' style='text-algin:center;position:absolute;height:"+screen_height.toString()+"px;width:"+screen_width.toString()+"px;'></div>";
+      $('body').append(fsDiv)
+
+      function saveData(subjectID,experiment_name,csvStrings,dataAsJSON){
+       $.ajax({
+          type: 'post',
+          cache: false,
+          url: '../store2.php', // this is the path to the above PHP script
+          data: {subjectID: subjectID, folder: experiment_name, csvStrings: csvStrings, dataAsJSON: dataAsJSON}
+       });
+      }
+
+      function getCsvStrings(){
+        csvStrings = [];
+        csvStrings.push(jsPsych.data.dataOfTypeAsCSV('wordlist'));
+        csvStrings.push(jsPsych.data.dataOfTypeAsCSV('response-table'));
+        return csvStrings
+      }
+
+      /* create experiment definition array */
+      var experiment = [];
+      experiment.push(activate_fullscreen);
+      experiment.push(consent_block);
+      experiment.push(instructions_block);
+      experiment.push(trial_chunk);
+      experiment.push(test_chunk);
+      experiment.push(end_fullscreen);
+      experiment.push(debriefing_block);
+
+      /* start the experiment */
+      jsPsych.init({
+        display_element: $('#fsDiv'),
+        experiment_structure: experiment
+      });
+    </script>
 </html>
