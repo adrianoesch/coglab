@@ -76,12 +76,11 @@
         cont_key: "rightarrow"
       };
 
-      var instructions_chunk = {
+      var instructions_block = {
         type: "instructions",
         pages: [getPar(texts.instructions,'margin-top:50px;'),getPar(texts.reminder,'margin-top:150px;')],
         nav_back: true
       };
-
 
       var instructions_reoffer_block= {
         type: "text",
@@ -234,7 +233,7 @@
 
       var instructions_chunk = {
           chunk_type: 'while',
-          timeline: [instructions_chunk, trial_chunk, instructions_reoffer_block],
+          timeline: [instructions_block, trial_chunk, instructions_reoffer_block],
           continue_function: function(){
             var lasttrial = jsPsych.data.getLastTrialData();
             if (lasttrial.key_press == 'rightarrow'){
@@ -276,8 +275,8 @@
               return false
             }
           }
-          if ('age' in keys){
-            if (data!==parseInt(info['age'])){
+          if (keys.indexOf('age')>-1){
+            if (parseInt(info['age'])!==parseInt(info['age'],10)){
               return false
             }
           }
