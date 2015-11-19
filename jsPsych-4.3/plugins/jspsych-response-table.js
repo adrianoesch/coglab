@@ -82,7 +82,7 @@
        responseContent.push(event.target.textContent);
        responseLocation.push(event.target.id);
        var that = this
-       $(that).css("background", "red");
+       $(that).css("background", "rgb(100,100,100)");
        setTimeout(function(){
          if ($(that).is(':hover')){
             $(that).css("background", "rgb(180,180,180)")
