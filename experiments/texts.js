@@ -38,7 +38,7 @@ texts.instructions_reoffer = '<p>When you are ready for the serious trials, plea
                         want to re-read the instructions, press the left arrow key.</p><p>Please note: In case of \
                         too many incorrect size judgments, a trial will be repeated.</p>'
 
-texts.instruction_red = 'Please select the 5 red words, in their order of presentation, with the mouse'
+texts.instruction_red = 'Please select the 5 red words, in their order of presentation, with the mouse.'
 texts.instruction_blue = 'This time please recall the blue words, not the red words, in their order of presentation.'
 texts.instruction_circle = 'Continue by clicking on the blue circle.'
 

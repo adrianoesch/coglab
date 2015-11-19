@@ -13,6 +13,7 @@
      trials[0] = {};
      trials[0].type = "response-table";
      trials[0].words = params.words
+     trials[0].header = params.header
      trials[0].rows = params.rows
      trials[0].cols = params.cols
      trials[0].tdStyle = (typeof params.tdStyle === 'undefined') ? {} : params.tdStyle ;
@@ -68,7 +69,7 @@
      responseContent = [];
 
     //  show table
-     display_element.html(response_table);
+     display_element.html(trial.header+response_table);
      $(".teAc").mouseenter(function(){$(this).css("background", "rgb(180,180,180)")});
      $(".teAc").mouseleave(function(){$(this).css("background", "")});
 
@@ -83,9 +84,14 @@
        var that = this
        $(that).css("background", "red");
        setTimeout(function(){
-         $(that).css("background", "rgb(180,180,180)")},100);
+         if ($(that).is(':hover')){
+            $(that).css("background", "rgb(180,180,180)")
+         }else{
+           $(that).css("background", "")
+         };
+       },100);
        t0=t1;
-       if (idx==4){endTrial()}
+       if (idx==4){setTimeout(endTrial,150);}
        idx+=1;
      });
   }

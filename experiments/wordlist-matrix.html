@@ -140,7 +140,7 @@
       var items_func = function(){return getRandomWordlistSample(10)};
       var colors_func = function(){return jsPsych.randomization.repeat(['red','blue'],5)};
 
-      var word_presentation = {
+      var wordsequence_block = {
             type: 'wordlist',
             items: items_func,
             colors: colors_func,
@@ -196,18 +196,18 @@
 
       var response_table = {
         type : "response-table",
+        header: "<p style='font-weight:bold;text-align:center;margin-top:150px;'>"+texts.instruction_red+"</p>",
         words : response_words,
         rows : 3,
         cols : 5,
         tdStyle : "height:80px;width:150px;font-size:25px;padding:15px;text-align:center;",
-        tableStyle: "position:relative;margin: 0 auto; top:"+(centerY-150).toString()+"px;"
+        tableStyle: "position:relative;margin: 0 auto; top:"+(centerY-350).toString()+"px;"
       }
 
       var trialIdx=1;
       var trial_chunk = {
           chunk_type: 'while',
-          timeline: [cross_block, word_presentation, response_table, empty_block],
-          // timeline: [ word_presentation, response_table],
+          timeline: [cross_block, wordsequence_block, response_table, empty_block],
           continue_function: function(){
           if (trialIdx==2){
             return false
@@ -221,8 +221,7 @@
       var testIdx=1;
       var test_chunk = {
           chunk_type: 'while',
-          timeline: [cross_block, word_presentation, response_table, empty_block],
-          // timeline: [ word_presentation, response_table],
+          timeline: [cross_block, wordsequence_block, response_table, empty_block],
           continue_function: function(){1
           if (testIdx==12){
             return false
