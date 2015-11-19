@@ -57,16 +57,16 @@ texts.sincerity = '<p>Finally, we ask you to tell us honestly whether you did th
                   <option val="no">No, my data should not be used</option></select></p>'
 
 
-texts.age = '<p>How old are you?  <input type="text" id="age"></input></p>'
+texts.age = '<p>How old are you? <select type="text" id="age">'+age_options+'</select></p>'
 texts.gender = '<p>Gender: <select id="gender"><option value=""></option>\
-                <option value="f">Female</option><option value="m">Male</otion>\
-                <option value="o">Others</option></select></p>'
+                <option value="female">Female</option><option value="male">Male</otion>\
+                <option value="other">Others</option></select></p>'
 texts.qualification = '<p>Highest educational qualification: <select id="quali">\
                       <option val=""></option>\
-                      <option val="no high">No high school degree</option>\
-                      <option val="hishschool">High school degree</option>\
-                      <option val="uni">University degree</option>\
-                      <option val="uni">Doctoral degree</option></select></p>'
+                      <option val="no highschool">No high school degree</option>\
+                      <option val="highschool">High school degree</option>\
+                      <option val="university">University degree</option>\
+                      <option val="doctoral">Doctoral degree</option></select></p>'
 
 texts.empty_error = '<p id="empty_error" style="color:red;"><p>'
 

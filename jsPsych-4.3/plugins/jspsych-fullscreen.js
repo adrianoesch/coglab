@@ -36,13 +36,14 @@ jsPsych['fullscreen'] = (function(){
 
       function launchIntoFullscreen(element) {
         if(element.requestFullscreen){
-            element.requestFullscreen();
+            element.requestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
           } else if(element.mozRequestFullScreen) {
-            element.mozRequestFullScreen();
+            document.addEventListener('keydown',function(e){e.preventDefault()});
           } else if(element.webkitRequestFullscreen) {
-            element.webkitRequestFullscreen();
+            element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+            document.addEventListener('keydown',function(e){e.preventDefault()});
           } else if(element.msRequestFullscreen) {
-            element.msRequestFullscreen();
+            element.msRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
           }
       };
       function quitFullscreen(element) {
@@ -164,7 +165,6 @@ jsPsych['fullscreen'] = (function(){
               trial.on_launch_fail()
             }
             if(checkHide()){
-              launchIntoFullscreen(document.documentElement);
               if (typeof trial.on_hide_fail != 'undefined'){
                 if (typeof trial.on_hide_fail != 'function'){
                   console.error('jspsych-fullscreen response parameter is not a function.');
