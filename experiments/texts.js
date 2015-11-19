@@ -11,7 +11,7 @@ texts.informed_consent = '<h2>Consent</h2><p>In this experiment you will be aske
                           is of course voluntary, and you can quit the experiment at any time without giving any \
                           reasons. However, you will receive payment only if you complete the experiment.</p>\
                           <p>By pressing the right arrow you agree to those terms and continue the experiment.'
-texts.instructions1 = '<h2>Instructions</h2><p>Thank you very much for taking part in our experiment! The experiment will take about \
+texts.instructions = '<h2>Instructions</h2><p>Thank you very much for taking part in our experiment! The experiment will take about \
                       10 to 15 minutes.</p><p>In each trial you will see 10 words presented sequentially. All words \
                       refer to concrete objects.</p></p>You have two tasks: <p>Your first task is to judge for each word \
                       whether the object it refers to is larger or smaller than a soccer ball.</p><p> If the object is \
@@ -25,7 +25,18 @@ texts.instructions1 = '<h2>Instructions</h2><p>Thank you very much for taking pa
                       try to select each word at the position it initially appeared. For example, if you do not remember \
                       the third red word that was presented, but the fourth red word, please select the fourth word as the \
                       fourth word.</p><p>You will first do two practice trials, followed by 12 serious trials.</p>\
-                      <p>Please press the right arrow key to continue ...</p>'
+                      <p>Please press the right arrow key to continue.</p>'
+
+texts.reminder = '<p>When you are ready for the practice trials, please press the right arrow key. If you \
+                              want to re-read the instructions, press the left arrow key.</p><p>Reminder:</p>\
+                              <p>If the object is <strong>smaller</strong> than a soccer ball, please press the \
+                              <strong>left</strong> arrow key;</p><p>if the object is <strong>larger</strong> than\
+                               a soccer ball, please press the <strong>right</strong> arrow key.</p><p>Also, remember \
+                               all the <strong>red words</strong> in their <strong>order of presentation</strong>.'
+
+texts.instructions_reoffer = '<p>When you are ready for the serious trials, please press the right arrow key. If you \
+                        want to re-read the instructions, press the left arrow key.</p><p>Please note: In case of \
+                        too many incorrect size judgments, a trial will be repeated.</p>'
 
 texts.instruction_red = 'Please select the 5 red words, in their order of presentation, with the mouse'
 texts.instruction_blue = 'This time please recall the blue words, not the red words, in their order of presentation.'
@@ -40,13 +51,30 @@ texts.fullscreen_fail = "Your Browser doesn't allow launching into fullscreen. P
 texts.sincerity = '<p>Finally, we ask you to tell us honestly whether you did the experiment seriously, \
                   giving it your full attention. You will receive your payment independent of how you respond, \
                   this question serves only to decide whether your data will be included in the analysis.</p>\
-                  <p>Have you done the experiment seriously?</p>'
-texts.sincerity_yes = 'Yes, my data should be used'
-texts.sincerity_no = 'No, my data should not be used'
+                  <p>Have you done the experiment seriously? <select id="sincerity">\
+                  <option val=""></option>\
+                  <option val="yes">Yes, my data should be used</option>\
+                  <option val="no">No, my data should not be used</option></select></p>'
 
-texts.end_fullscreen = "This was it! Please save your data and continue to the debriefing/confirmation code\
+
+texts.age = '<p>How old are you?  <input type="text" id="age"></input></p>'
+texts.gender = '<p>Gender: <select id="gender"><option value=""></option>\
+                <option value="f">Female</option><option value="m">Male</otion>\
+                <option value="o">Others</option></select></p>'
+texts.qualification = '<p>Highest educational qualification: <select id="quali">\
+                      <option val=""></option>\
+                      <option val="no high">No high school degree</option>\
+                      <option val="hishschool">High school degree</option>\
+                      <option val="uni">University degree</option>\
+                      <option val="uni">Doctoral degree</option></select></p>'
+
+texts.empty_error = '<p id="empty_error" style="color:red;"><p>'
+
+texts.button = "<div style='float:right;'><button id='jspsych-fullscreen-button'>Next</button></div>"
+
+texts.end_fullscreen = "<h2>This was it!</h2> Please save your data and continue to the debriefing/confirmation code\
                        by clicking 'Save & Exit'."
-texts.debriefing = '<p>Thank you again for participating in our experiment.</p><p> The goal of this experiment was \
+texts.debriefing = '<p><h2>Thank you again for participating in our experiment.</h2></p><p> The goal of this experiment was \
                    to investigate whether people can intentionally forget information they want to forget, \
                    and whether this is accomplished better when more time is available for forgetting. To \
                    that end we tested, in the last trial, your memory for the blue words, which you were \

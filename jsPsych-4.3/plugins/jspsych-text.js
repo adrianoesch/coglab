@@ -41,7 +41,7 @@
 
                 display_element.html(''); // clear the display
 
-                save_data(info.key, info.rt);
+                save_data(info.key_string, info.rt);
 
                 jsPsych.finishTrial();
 

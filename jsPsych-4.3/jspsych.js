@@ -1241,8 +1241,9 @@
 					held_keys.push(e.which);
 
 					parameters.callback_function({
-						key_code: e.which,
-						key_string: keyCharacterLookup[e.which],
+						key: e.which, //keep consistent with old version
+						key_code: e.which, //more precise
+						key_string: keyCharacterLookup[e.which], //added adrian oesch
 						rt: key_time - start_time
 					});
 

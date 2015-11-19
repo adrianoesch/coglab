@@ -9,6 +9,8 @@
         <script src="../jsPsych-4.3/plugins/jspsych-single-stim-ao.js"></script>
         <script src="../jsPsych-4.3/plugins/jspsych-single-stim.js"></script>
         <script src="../jsPsych-4.3/plugins/jspsych-wordlist.js"></script>
+        <script src="../jsPsych-4.3/plugins/jspsych-instructions.js"></script>
+        <script src="../jsPsych-4.3/plugins/html-input-ao.js"></script>
         <script src="../jsPsych-4.3/plugins/jspsych-fullscreen.js"></script>
         <script src="../jsPsych-4.3/plugins/jspsych-response-table.js"></script>
         <script src="../jsPsych-4.3/plugins/jspsych-save-get-vars.js"></script>
@@ -46,7 +48,7 @@
       // prepare structures
       var activate_fullscreen = {
           type: 'fullscreen',
-          showtext: texts.warning,
+          showtext: getPar(texts.warning,'margin-top:50px;'),
           buttonStyle : 'float:right;',
           buttontext: "Enter",
           on_fullscreen_abort: function(){
@@ -74,11 +76,18 @@
         cont_key: "rightarrow"
       };
 
-      var instructions_block = {
+      var instructions_chunk = {
+        type: "instructions",
+        pages: [getPar(texts.instructions,'margin-top:50px;'),getPar(texts.reminder,'margin-top:150px;')],
+        nav_back: true
+      };
+
+
+      var instructions_reoffer_block= {
         type: "text",
-        text: getPar(texts.instructions1,'margin-top:50px;'),
+        text: getPar(texts.instructions_reoffer,'margin-top:150px;'),
         timing_response: -1,
-        cont_key: "rightarrow"
+        cont_key: ["leftarrow","rightarrow"]
       };
 
       function getCrossTable(linelength){
@@ -214,7 +223,7 @@
           chunk_type: 'while',
           timeline: [cross_block, word_presentation, response_table, empty_block],
           // timeline: [ word_presentation, response_table],
-          continue_function: function(){
+          continue_function: function(){1
           if (testIdx==12){
             return false
           }else{
@@ -224,9 +233,22 @@
         }
       };
 
+      var instructions_chunk = {
+          chunk_type: 'while',
+          timeline: [instructions_chunk, trial_chunk, instructions_reoffer_block],
+          continue_function: function(){
+            var lasttrial = jsPsych.data.getLastTrialData();
+            if (lasttrial.key_press == 'rightarrow'){
+              return false
+            }else{
+              return true
+            };
+        }
+      };
+
       var end_fullscreen = {
           type: 'fullscreen',
-          showtext: getPar(texts.end_fullscreen),
+          showtext: getPar(texts.end_fullscreen,'margin-top:150px;'),
           buttonStyle : 'float:right;',
           buttontext: "Save & Exit",
           exit: true,
@@ -238,10 +260,36 @@
 
       var debriefing_block = {
         type: "text",
-        text: getPar(texts.debriefing),
+        text: getPar(texts.debriefing,'margin-top:100px'),
         timing_response: -1,
         cont_key:''
       };
+
+      var demographic_block = {
+        type: "html-input",
+        html: [getPar(texts.age+texts.gender+texts.qualification+texts.empty_error+texts.button,'margin-top:150px;'),
+               getPar(texts.sincerity+texts.button,'margin-top:150px;')],
+        inputIDs: [['age','gender','quali'],['sincerity']],
+        check: function(info){
+          keys = Object.keys(info)
+          for(i=0;i<keys.length;i++){
+            if (info[keys[i]]==''){
+              return false
+            }
+          }
+          if ('age' in keys){
+            if (data!==parseInt(info['age'])){
+              return false
+            }
+          }
+          return true
+        },
+        cont_key: 'Button',
+        error : function(){
+          alert('Your responses are invalid. Please check if your age is an integer and your selected an answer everywhere.')
+        }
+      };
+
 
       //create default display element and style classes
       var fsDiv = "<div id='fsDiv' style='text-algin:center;position:absolute;height:"+screen_height.toString()+"px;width:"+screen_width.toString()+"px;'></div>";
@@ -265,11 +313,12 @@
 
       /* create experiment definition array */
       var experiment = [];
+
       experiment.push(activate_fullscreen);
       experiment.push(consent_block);
-      experiment.push(instructions_block);
-      experiment.push(trial_chunk);
-      experiment.push(test_chunk);
+      experiment.push(instructions_chunk);
+      // experiment.push(test_chunk);
+      experiment.push(demographic_block);
       experiment.push(end_fullscreen);
       experiment.push(debriefing_block);
 
