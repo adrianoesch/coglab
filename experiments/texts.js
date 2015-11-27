@@ -1,4 +1,4 @@
-texts = {};
+var texts = {};
 texts.warning = '<h2>Welcome</h2><p>To run this experiment we need launch into fullscreen mode. Following actions will terminate \
                 the experiment:<ul><li>exiting fullscreen mode</li><li>switching tabs or applications</li>\
                 <li>reloading the webpage</li><li>going-"back" in the browser</li></ul>\
@@ -12,32 +12,32 @@ texts.informed_consent = '<h2>Consent</h2><p>In this experiment you will be aske
                           reasons. However, you will receive payment only if you complete the experiment.</p>\
                           <p>By pressing the right arrow you agree to those terms and continue the experiment.'
 texts.instructions = '<h2>Instructions</h2><p>Thank you very much for taking part in our experiment! The experiment will take about \
-                      10 to 15 minutes.</p><p>In each trial you will see 10 words presented sequentially. All words \
-                      refer to concrete objects.</p></p>You have two tasks: <p>Your first task is to judge for each word \
-                      whether the object it refers to is larger or smaller than a soccer ball.</p><p> If the object is \
-                      <strong>smaller</strong> than a soccer ball, please press the <strong>left</strong> arrow key;</p>\
-                      <p>if the object is <strong>larger</strong> than a soccer ball, please press the \
-                      <strong>right</strong> arrow key.</p><p>Your second task is to remember all the \
+                      10 to 15 minutes. In each trial you will see 10 words presented sequentially. All words \
+                      refer to concrete objects.</p></p>You have two tasks: <ul><li>Your first task is to judge for each word \
+                      whether the object it refers to is larger or smaller than a soccer ball:<br>If the object is \
+                      <strong>smaller</strong> than a soccer ball, please press the <strong>left</strong> arrow key.\
+                      <br>if the object is <strong>larger</strong> than a soccer ball, please press the \
+                      <strong>right</strong> arrow key.</p><li>Your second task is to remember all the \
                       <strong>red words</strong> in their <strong>order of presentation</strong>. You don\'t need \
                       to remember the blue words.<br>At the end of the presentation of all 10 words you will be \
                       asked to select the red words from a set of 15 words. Please click on the 5 red words that \
-                      you remembered in their order of presentation.<br>If you do not remember all words nevertheless \
+                      you remembered in their order of presentation. If you do not remember all words nevertheless \
                       try to select each word at the position it initially appeared. For example, if you do not remember \
                       the third red word that was presented, but the fourth red word, please select the fourth word as the \
-                      fourth word.</p><p>You will first do two practice trials, followed by 12 serious trials.</p>\
+                      fourth word.</li></ul><p>You will first do two practice trials, followed by 12 serious trials.</p>\
                       <p>Please press the right arrow key to continue.</p>'
 
 texts.reminder = '<p>When you are ready for the practice trials, please press the right arrow key. If you \
-                              want to re-read the instructions, press the left arrow key.</p><p>Reminder:</p>\
-                              <p>If the object is <strong>smaller</strong> than a soccer ball, please press the \
-                              <strong>left</strong> arrow key;</p><p>if the object is <strong>larger</strong> than\
-                               a soccer ball, please press the <strong>right</strong> arrow key.</p><p>Also, remember \
-                               all the <strong>red words</strong> in their <strong>order of presentation</strong>.'
+                              want to re-read the instructions, press the left arrow key.</p><p>Reminder:<ul>\
+                              <li>If the object is <strong>smaller</strong> than a soccer ball, please press the \
+                              <strong>left</strong> arrow key;</li><li>if the object is <strong>larger</strong> than\
+                               a soccer ball, please press the <strong>right</strong> arrow key.</li><li>Also, remember \
+                               all the <strong>red words</strong> in their <strong>order of presentation</strong>.</li></ul>'
 
 texts.instructions_reoffer = '<p>When you are ready for the serious trials, please press the right arrow key. If you \
-                        want to re-read the instructions, press the left arrow key.</p><p>Please note: In case of \
-                        too many incorrect size judgments, a trial will be repeated.</p>'
-
+                        want to re-read the instructions, press the left arrow key.</p>'
+texts.feedback_bad_size_judgement = '<p>You responded to less than 7 size judgements correct. Another trial is repeated.</p>\
+                                     <p>Please press the right arrow to continue.</p>'
 texts.instruction_red = 'Please select the 5 red words, in their order of presentation, with the mouse.'
 texts.instruction_blue = 'This time please recall the blue words, not the red words, in their order of presentation.'
 texts.instruction_circle = 'Continue by clicking on the blue circle.'

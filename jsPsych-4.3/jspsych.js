@@ -349,7 +349,7 @@
 					}
 				}
 
-				/*else if(this.type == 'if'){
+				else if(this.type == 'if'){
 					if(this.currentTimelineLocation >= this.timeline.length){
 						return true;
 					}
@@ -363,7 +363,7 @@
 					} else {
 						return false;
 					}
-				}*/
+				}
 
 			};
 

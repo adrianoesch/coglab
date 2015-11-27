@@ -68,7 +68,7 @@
 				}
 
 				function getJudgement(size,keystring){
-					if (keystring=='rightarrow' && size>0) {
+					if (keystring=='rightarrow' && size>0||keystring=='leftarrow' && size<0) {
 						return "correct"
 					}else{
 						return "incorrect"
