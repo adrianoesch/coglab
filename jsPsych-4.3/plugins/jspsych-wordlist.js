@@ -56,6 +56,7 @@
 
 			// function to end trial when it is time
 			var end_trial = function() {
+				$('body').css('cursor', 'default');
 
 				// kill any remaining setTimeout handlers
 				for (var i = 0; i < setTimeoutHandlers.length; i++) {
@@ -110,6 +111,7 @@
 				}
 
 				if (trial.response_ends_trial) {
+					$('body').css('cursor', '');
 					end_trial();
 				}
 			};

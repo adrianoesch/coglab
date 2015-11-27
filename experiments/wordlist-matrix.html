@@ -204,7 +204,7 @@
           if(d[i]['size_judgement']=='correct'){j+=1}
         }
         alert(j)
-        if (j<=threshold){
+        if (j<threshold){
           return false
         }else{
           return true
@@ -222,7 +222,7 @@
           chunk_type: 'if',
           timeline: [feedback_bad_size_judgement],
           conditional_function: function(){
-            return (moreThanThresholdCorrect(7)&&trialIdx>=2)
+            return (!moreThanThresholdCorrect(7)&&trialIdx>=2)
         }
       };
 
