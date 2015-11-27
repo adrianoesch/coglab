@@ -38,7 +38,7 @@ jsPsych['fullscreen'] = (function(){
         if(element.requestFullscreen){
             element.requestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
           } else if(element.mozRequestFullScreen) {
-            document.addEventListener('keydown',function(e){e.preventDefault()});
+            element.mozRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT)
           } else if(element.webkitRequestFullscreen) {
             element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
             document.addEventListener('keydown',function(e){e.preventDefault()});
