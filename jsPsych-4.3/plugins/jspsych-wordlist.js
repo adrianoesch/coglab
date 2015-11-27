@@ -67,6 +67,14 @@
 					jsPsych.pluginAPI.cancelKeyboardResponse(keyboardListener);
 				}
 
+				function getJudgement(size,keystring){
+					if (keystring=='rightarrow' && size>0) {
+						return "correct"
+					}else{
+						return "incorrect"
+					}
+				}
+
 				// gather the data to store for the trial
 				var trial_data = {
 					"rt": response.rt,
@@ -76,7 +84,8 @@
 					"size_difference" : trial.item.size_difference,
 					"binary_size": 0 ? trial.item.size_difference > 0 : 1,
 					"key_code": response.key_code,
-					"key_string": response.key_string
+					"key_string": response.key_string,
+					"size_judgement": getJudgement(trial.item.size_difference,response.key_string)
 				};
 
 				jsPsych.data.write(trial_data);
