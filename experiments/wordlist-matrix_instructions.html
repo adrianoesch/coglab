@@ -24,7 +24,7 @@
     <script>
       // settings
       var url = document.location.toString();
-      var experiment_name =  url.split('/')[url.split('/').length-1].split('.')[0];
+      var experiment_name =  url.split('/')[url.split('/').length-1].split('.')[0]; // get experiment name from url
       var getVars = jsPsych.data.fromURL();
       var uniqueId = jsPsych.data.uniqueId();
       var screen_width = screen.width;
@@ -205,12 +205,26 @@
         tableStyle: "position:relative;margin: 0 auto; top:"+(centerY-350).toString()+"px;"
       }
 
+      function sizeCheck(threshold){
+        d = jsPsych.data.getTrialsOfType('wordlist')
+        d = d.slice(d.length-10,d.length);
+        j = 0;
+        for(i=0;i<10;i++){
+          if(d[i]['size_judgement']=='correct'){j+=1}
+        }
+        if (j<threshold){
+          return false
+        }else{
+          return true
+        };
+      };
+
       var trialIdx=1;
       var trial_chunk = {
           chunk_type: 'while',
           timeline: [cross_block, wordsequence_block, response_table, empty_block],
           continue_function: function(){
-          if (trialIdx==2){
+          if (trialIdx>=2){
             return false
           }else{
             trialIdx+=1
@@ -238,7 +252,7 @@
           timeline: [instructions_block, trial_chunk, instructions_reoffer_block],
           continue_function: function(){
             var lasttrial = jsPsych.data.getLastTrialData();
-            if (lasttrial.key_press == 'rightarrow'){
+            if (lasttrial.key_press == 'rightarrow'&&sizeCheck(7)){
               return false
             }else{
               return true
@@ -253,7 +267,6 @@
           buttontext: "Save & Exit",
           exit: true,
           on_finish: function(data){
-            alert('save')
             saveData(uniqueId,experiment_name, getCsvStrings(data), jsPsych.data.dataAsJSON())
           }
       }
