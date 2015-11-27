@@ -24,7 +24,7 @@
     <script>
       // settings
       var url = document.location.toString();
-      var experiment_name =  url.split('/')[url.split('/').length-1].split('.')[0];
+      var experiment_name =  url.split('/')[url.split('/').length-1].split('.')[0]; // get experiment name from url
       var getVars = jsPsych.data.fromURL();
       var uniqueId = jsPsych.data.uniqueId();
       var screen_width = screen.width;
@@ -121,7 +121,7 @@
             type: 'single-stim',
             stimuli: '<p></p>',
             timing_post_trial: 0,
-            timing_response: 2000,
+            timing_response: -1,
             response_ends_trial: false
         }
 
@@ -306,15 +306,15 @@
       }
 
       /* create experiment definition array */
-      var experiment = [];
+      var experiment = [empty_block];
 
-      experiment.push(activate_fullscreen);
-      experiment.push(consent_block);
-      experiment.push(instructions_chunk);
-      experiment.push(test_chunk);
-      experiment.push(demographic_block);
-      experiment.push(end_fullscreen);
-      experiment.push(debriefing_block);
+      // experiment.push(activate_fullscreen);
+      // experiment.push(consent_block);
+      // experiment.push(instructions_chunk);
+      // experiment.push(test_chunk);
+      // experiment.push(demographic_block);
+      // experiment.push(end_fullscreen);
+      // experiment.push(debriefing_block);
 
       /* start the experiment */
       jsPsych.init({
