@@ -29,6 +29,7 @@
    plugin.trial = function(display_element, trial){
     //  prepare html table
      trial = jsPsych.pluginAPI.evaluateFunctionParameters(trial);
+     $('*').css('cursor', '')
      rows = trial.rows;
      cols = trial.cols;
      tdStyle = trial.tdStyle;
@@ -58,7 +59,7 @@
        jsPsych.data.write(trial_data);
        // clear the display
        display_element.html('')
-
+       $('*').css('cursor', 'none')
        // move on to the next trial
        jsPsych.finishTrial();
      }

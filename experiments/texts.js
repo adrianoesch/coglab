@@ -32,11 +32,16 @@ texts.reminder = '<p>When you are ready for the practice trials, please press th
                               <li>If the object is <strong>smaller</strong> than a soccer ball, please press the \
                               <strong>left</strong> arrow key;</li><li>if the object is <strong>larger</strong> than\
                                a soccer ball, please press the <strong>right</strong> arrow key.</li><li>Also, remember \
-                               all the <strong>red words</strong> in their <strong>order of presentation</strong>.</li></ul>'
+                               all the <strong>red words</strong> in their <strong>order of presentation</strong>.</li></ul></p>'
 
-texts.instructions_reoffer = '<p>When you are ready for the serious trials, please press the right arrow key. If you \
+texts.instructions_reoffer = '<p>Test trials are over. When you are ready for the serious trials, please press the right arrow key. If you \
                         want to re-read the instructions, press the left arrow key.</p>'
 texts.feedback_bad_size_judgement = '<p>You responded to less than 7 size judgements correct. Another trial is repeated.</p>\
+                                     <p>Reminder:<ul>\
+                                     <li>If the object is <strong>smaller</strong> than a soccer ball, please press the \
+                                     <strong>left</strong> arrow key;</li><li>if the object is <strong>larger</strong> than\
+                                     a soccer ball, please press the <strong>right</strong> arrow key.</li><li>Also, remember \
+                                     all the <strong>red words</strong> in their <strong>order of presentation</strong>.</li></ul>\
                                      <p>Please press the right arrow to continue.</p>'
 texts.instruction_red = 'Please select the 5 red words, in their order of presentation, with the mouse.'
 texts.instruction_blue = 'This time please recall the blue words, not the red words, in their order of presentation.'

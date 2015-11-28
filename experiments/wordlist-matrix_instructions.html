@@ -54,8 +54,7 @@
           buttontext: "Enter",
           on_fullscreen_abort: function(){
             jsPsych.finishTrial();
-            jsPsych.endExperiment(getPar(texts.fullscreen_exit,errStyle));
-        },
+            jsPsych.endExperiment(getPar(texts.fullscreen_exit,errStyle))},
           on_hide_abort:function(){
             jsPsych.finishTrial();
             jsPsych.endExperiment(getPar(texts.visibility_exit,errStyle));
@@ -74,7 +73,10 @@
         type: "text",
         text: getPar(texts.informed_consent,'margin-top:150px;'),
         timing_response: -1,
-        cont_key: "rightarrow"
+        cont_key: "rightarrow",
+        on_finish: function(){
+          $('*').css('cursor','none');
+        }
       };
 
       var instructions_block = {
@@ -85,7 +87,7 @@
 
       var instructions_reoffer_block= {
         type: "text",
-        text: getPar(texts.instructions_reoffer,'margin-top:150px;'),
+        text: getPar(texts.instructions_reoffer,'margin-top:200px;'),
         timing_response: -1,
         cont_key: ["leftarrow","rightarrow"]
       };
@@ -126,8 +128,36 @@
             response_ends_trial: false
         }
 
-      function getRandomWordlistSample(N,option){
-          sample = jsPsych.randomization.sample(wordlistItems,N,true)
+
+      var empty_show_cursor_block = {
+              type: 'single-stim',
+              stimuli: '',
+              is_html: true,
+              timing_response: 1,
+              on_finish: function(){
+                $('*').css('cursor','');
+              }
+          }
+
+      function getUnusedItems(subtract){
+        pastWords = [];
+        jsPsych.data.getTrialsOfType('response-table').map(function(i){
+          pastWords.push.apply(pastWords,i['words_presented'])
+        });
+        if (typeof subtract != 'undefined'){pastWords.push.apply(pastWords,subtract)};
+        sample = wordlistItems.filter(function(item){
+          if (pastWords.indexOf(item['text']) > -1){
+            return false
+          }else{
+            return true
+          };
+        })
+        return sample
+      }
+
+      function getRandomWordlistSample(N,option,subtract){
+          unused = getUnusedItems(subtract)
+          sample = jsPsych.randomization.sample(unused,N)
           if(typeof option === "undefined") {
             return sample
           }else{
@@ -156,40 +186,14 @@
 
       function getPreviousTenWords(){
         lastTrials = jsPsych.data.getTrialsOfType('wordlist')
-        keys = Object.keys(lastTrials[0])
-        if (keys.indexOf('text') == -1){
-          return
-        }
-        lastTenTrials = lastTrials.slice(lastTrials.length-10,lastTrials.length)
-        lastTenTrialsTexts = []
-        for (i=0;i<10;i++){
-          lastTenTrialsTexts.push(lastTenTrials[i].text)
-        }
-        return lastTenTrialsTexts
+        if (lastTrials.length == 0){return };
+        lastTenTrials = lastTrials.slice(lastTrials.length-10,lastTrials.length).map(function(i){return i['text']})
+        return lastTenTrials
       }
 
-      function sameElementInArrays(array1,array2){
-        b = false
-        for (i=0;i<array1.length;i++){
-          if ( array2.indexOf(array1[i]) > -1){
-            b = true
-            break
-          }
-        }
-        return(b)
-      };
-
       var response_words = function getResponseSet(wordlistItems){
-          var preWords = getPreviousTenWords();
-          if (typeof preWords =="undefined"){
-            preWords = getRandomWordlistSample(1,'text')
-          }
-          while(true){
-            newSample = getRandomWordlistSample(5,'text');
-            if(!sameElementInArrays(newSample,preWords)){
-              break;
-            }
-          }
+          var preWords = getPreviousTenWords() || [];
+          newSample = getRandomWordlistSample(5,'text',preWords);
           var sample = preWords.concat(newSample);
           var sample = sample.sort(function() { return(0.5-Math.random())});
           return sample;
@@ -205,10 +209,10 @@
         tableStyle: "position:relative;margin: 0 auto; top:"+(centerY-350).toString()+"px;"
       }
 
-      function sizeCheck(threshold){
-        d = jsPsych.data.getTrialsOfType('wordlist')
+      function moreThanThresholdCorrect(threshold){
+        var d = jsPsych.data.getTrialsOfType('wordlist')
         d = d.slice(d.length-10,d.length);
-        j = 0;
+        var j = 0;
         for(i=0;i<10;i++){
           if(d[i]['size_judgement']=='correct'){j+=1}
         }
@@ -220,11 +224,26 @@
       };
 
       var trialIdx=1;
+      var feedback_bad_size_judgement = {
+            type: "text",
+            text: getPar(texts.feedback_bad_size_judgement,'margin-top:200px;font-weight:bold;'),
+            timing_response: -1,
+            cont_key: ["rightarrow"]
+        }
+      var feedback_chunk = {
+          chunk_type: 'if',
+          timeline: [feedback_bad_size_judgement],
+          conditional_function: function(){
+            return (!moreThanThresholdCorrect(7)&&trialIdx>=2)
+        }
+      };
+
       var trial_chunk = {
           chunk_type: 'while',
-          timeline: [cross_block, wordsequence_block, response_table, empty_block],
+          timeline: [cross_block, wordsequence_block, response_table,feedback_chunk, empty_block],
+          data:{test_trial:"true"},
           continue_function: function(){
-          if (trialIdx>=2){
+          if (trialIdx>=2&&moreThanThresholdCorrect(7)){
             return false
           }else{
             trialIdx+=1
@@ -237,6 +256,7 @@
       var test_chunk = {
           chunk_type: 'while',
           timeline: [cross_block, wordsequence_block, response_table, empty_block],
+          data:{test_trial:"false"},
           continue_function: function(){1
           if (testIdx==12){
             return false
@@ -252,7 +272,7 @@
           timeline: [instructions_block, trial_chunk, instructions_reoffer_block],
           continue_function: function(){
             var lasttrial = jsPsych.data.getLastTrialData();
-            if (lasttrial.key_press == 'rightarrow'&&sizeCheck(7)){
+            if (lasttrial.key_press == 'rightarrow'){
               return false
             }else{
               return true
@@ -294,7 +314,7 @@
         },
         cont_key: 'Button',
         error : function(){
-          alert('Your responses are invalid. Please check if your age is an integer and your selected an answer everywhere.')
+          alert('Some of the responses are empty. Please select an answer.')
         }
       };
 
@@ -326,6 +346,7 @@
       experiment.push(consent_block);
       experiment.push(instructions_chunk);
       // experiment.push(test_chunk);
+      experiment.push(empty_show_cursor_block);
       experiment.push(demographic_block);
       experiment.push(end_fullscreen);
       experiment.push(debriefing_block);

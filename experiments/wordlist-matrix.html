@@ -54,8 +54,7 @@
           buttontext: "Enter",
           on_fullscreen_abort: function(){
             jsPsych.finishTrial();
-            jsPsych.endExperiment(getPar(texts.fullscreen_exit,errStyle));
-        },
+            jsPsych.endExperiment(getPar(texts.fullscreen_exit,errStyle))},
           on_hide_abort:function(){
             jsPsych.finishTrial();
             jsPsych.endExperiment(getPar(texts.visibility_exit,errStyle));
@@ -74,7 +73,10 @@
         type: "text",
         text: getPar(texts.informed_consent,'margin-top:150px;'),
         timing_response: -1,
-        cont_key: "rightarrow"
+        cont_key: "rightarrow",
+        on_finish: function(){
+          $('*').css('cursor','none');
+        }
       };
 
       var instructions_block = {
@@ -125,6 +127,17 @@
             timing_response: 2000,
             response_ends_trial: false
         }
+
+
+      var empty_show_cursor_block = {
+              type: 'single-stim',
+              stimuli: '',
+              is_html: true,
+              timing_response: 1,
+              on_finish: function(){
+                $('*').css('cursor','');
+              }
+          }
 
       function getUnusedItems(subtract){
         pastWords = [];
@@ -203,7 +216,6 @@
         for(i=0;i<10;i++){
           if(d[i]['size_judgement']=='correct'){j+=1}
         }
-        alert(j)
         if (j<threshold){
           return false
         }else{
@@ -229,6 +241,7 @@
       var trial_chunk = {
           chunk_type: 'while',
           timeline: [cross_block, wordsequence_block, response_table,feedback_chunk, empty_block],
+          data:{test_trial:"true"},
           continue_function: function(){
           if (trialIdx>=2&&moreThanThresholdCorrect(7)){
             return false
@@ -243,6 +256,7 @@
       var test_chunk = {
           chunk_type: 'while',
           timeline: [cross_block, wordsequence_block, response_table, empty_block],
+          data:{test_trial:"false"},
           continue_function: function(){1
           if (testIdx==12){
             return false
@@ -300,7 +314,7 @@
         },
         cont_key: 'Button',
         error : function(){
-          alert('Your responses are invalid. Please check if your age is an integer and your selected an answer everywhere.')
+          alert('Some of the responses are empty. Please select an answer.')
         }
       };
 
@@ -332,6 +346,7 @@
       experiment.push(consent_block);
       experiment.push(instructions_chunk);
       experiment.push(test_chunk);
+      experiment.push(empty_show_cursor_block);
       experiment.push(demographic_block);
       experiment.push(end_fullscreen);
       experiment.push(debriefing_block);
