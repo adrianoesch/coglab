@@ -187,7 +187,7 @@
       function getPreviousTenWords(){
         lastTrials = jsPsych.data.getTrialsOfType('wordlist')
         if (lastTrials.length == 0){return };
-        lastTenTrials = lastTrials.slice(lastTrials.length-10,lastTrials.length).map(function(i){return i['text']})
+        lastTenTrials = lastTrials.slice(-10).map(function(i){return i['text']})
         return lastTenTrials
       }
 
@@ -211,7 +211,7 @@
 
       function moreThanThresholdCorrect(threshold){
         var d = jsPsych.data.getTrialsOfType('wordlist')
-        d = d.slice(d.length-10,d.length);
+        d = d.slice(-10);
         var j = 0;
         for(i=0;i<10;i++){
           if(d[i]['size_judgement']=='correct'){j+=1}
