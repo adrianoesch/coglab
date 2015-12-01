@@ -26,7 +26,7 @@
       var url = document.location.toString();
       var experiment_name =  url.split('/')[url.split('/').length-1].split('.')[0]; // get experiment name from url
       var getVars = jsPsych.data.fromURL();
-      var uniqueId = jsPsych.data.uniqueId();
+      var uniqueId = jsPsych.data.uniqueId(16);
       var screen_width = screen.width;
       var screen_height = screen.height;
       var centerX = screen_width*0.5
@@ -314,7 +314,7 @@
         },
         cont_key: 'Button',
         error : function(){
-          alert('Some of the responses are empty. Please select an answer.')
+          alert('Some of the select-boxes are empty. Please chose an option.')
         }
       };
 
@@ -331,11 +331,23 @@
           data: {subjectID: subjectID, folder: experiment_name, csvStrings: csvStrings, dataAsJSON: dataAsJSON}
        });
       }
+      function createDemographicsCsvString(){
+        var d = jsPsych.data.getTrialsOfType('html-input');
+        var csv = [{ uniqueId : d[0]['uniqueId'],
+                    age : d[0]['age'],
+                    gender : d[0]['gender'],
+                    qualification : d[0]['quali'],
+                    sincerity : d.length>1 ? d[1]['sincerity'] :  ''
+                  }];
+        var csvString = jsPsych.data.JSON2CSV(csv);
+        return csvString
+      }
 
       function getCsvStrings(){
         csvStrings = [];
         csvStrings.push(jsPsych.data.dataOfTypeAsCSV('wordlist'));
         csvStrings.push(jsPsych.data.dataOfTypeAsCSV('response-table'));
+        csvStrings.push(createDemographicsCsvString());
         return csvStrings
       }
 

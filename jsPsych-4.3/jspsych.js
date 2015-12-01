@@ -699,7 +699,7 @@
 							 $_GET[aux[0]] = aux[1];
 						}
 				}
-				return $_GET
+				return $_GET;
 		};
 
 		module.uniqueId = function(stringLength){
@@ -722,7 +722,7 @@
 
 		module.dataAsCSV = function() {
 			var dataObj = module.getData();
-			return JSON2CSV(dataObj);
+			return module.JSON2CSV(dataObj);
 		};
 
 		module.dataAsJSON = function() {
@@ -732,8 +732,9 @@
 
 		module.dataOfTypeAsCSV = function(type) {
 			var dataObj = module.getTrialsOfType(type);
-			return JSON2CSV(dataObj);
+			return module.JSON2CSV(dataObj);
 		};
+
 
 		module.localSave = function(filename, format) {
 
@@ -864,7 +865,7 @@
 		// http://stackoverflow.com/users/64741/zachary
 		// http://stackoverflow.com/users/317/joseph-sturtevant
 
-		function JSON2CSV(objArray) {
+		module.JSON2CSV = function (objArray) {
 			var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
 			var line = '';
 			var result = '';
