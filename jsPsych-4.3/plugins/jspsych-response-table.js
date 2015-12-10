@@ -50,11 +50,16 @@
 
      // prepare end function
      var endTrial = function(){
+       var lastTable = jsPsych.data.getTrialsOfType('response-table');
+       var repetition = lastTable.length>1 ? trialIdx == lastTable[lastTable.length-1]['trial_idx'] : false;
+
        trial_data = {
          "words_presented" :trial.words,
          "rt": JSON.stringify(responseTimes),
          "location": JSON.stringify(responseLocation),
-         "text": JSON.stringify(responseContent)
+         "text": JSON.stringify(responseContent),
+         "trial_idx" : trialIdx,
+         "repetition" : repetition
        };
        jsPsych.data.write(trial_data);
        // clear the display

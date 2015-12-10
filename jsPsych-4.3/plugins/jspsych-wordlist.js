@@ -75,6 +75,9 @@
 					}
 				}
 
+				var lastWordList = jsPsych.data.getTrialsOfType('wordlist')
+				var repetition = lastWordList.length>9 ? trialIdx == lastWordList[lastWordList.length-10]['trial_idx'] : false;
+
 				// gather the data to store for the trial
 				var trial_data = {
 					"rt": response.rt,
@@ -85,6 +88,8 @@
 					"binary_size": 0 ? trial.item.size_difference > 0 : 1,
 					"key_code": response.key_code,
 					"key_string": response.key_string,
+					"trial_idx" : trialIdx,
+					"repetition" : repetition,
 					"size_judgement": getJudgement(trial.item.size_difference,response.key_string)
 				};
 
