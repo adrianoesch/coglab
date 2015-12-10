@@ -36,7 +36,7 @@ texts.reminder = '<p>When you are ready for the practice trials, please press th
 
 texts.instructions_reoffer = '<p>Test trials are over. When you are ready for the serious trials, please press the right arrow key. If you \
                         want to re-read the instructions, press the left arrow key.</p>'
-texts.feedback_bad_size_judgement = '<p>You responded to less than 7 size judgements correct. Another trial is repeated.</p>\
+texts.feedback_bad_size_judgement = '<p>You made more than 3 errors when judging the size. This trial will be repeated.</p>\
                                      <p>Reminder:<ul>\
                                      <li>If the object is <strong>smaller</strong> than a soccer ball, please press the \
                                      <strong>left</strong> arrow key;</li><li>if the object is <strong>larger</strong> than\

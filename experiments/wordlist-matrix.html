@@ -17,6 +17,7 @@
         <script src="./age_options.js"></script>
         <script src="./words.js"></script>
         <script src="./texts.js"></script>
+        <script> var ip = "<?php echo $_SERVER['REMOTE_ADDR']; ?>";</script>
         <link href="../jsPsych-4.3/css/jspsych.css" rel="stylesheet" type="text/css"></link>
     </head>
     <body>
@@ -35,7 +36,9 @@
       jsPsych.data.addProperties(getVars);
       jsPsych.data.addProperties({
         experiment_name: experiment_name,
-        uniqueId: uniqueId
+        uniqueId: uniqueId,
+        time: Date().toString(),
+        IP: ip
       });
 
       var errStyle = "color:red;margin-top:200px;text-align:center;font-weight:bold;";
@@ -45,6 +48,22 @@
         }
         return "<div class='jspsych-display-element'><p style='"+style+"'>"+str+"</p><div>"
       }
+
+      function createItemStorage(){
+        var t =[];
+        for (i=0;i<16;i++){
+          x=jsPsych.randomization.sample(wordlistItems,15)
+          cols = jsPsych.randomization.repeat(['red','blue'],5)
+          for (j=0;j<10;j++){
+          x[j].color = cols[j]
+          }
+          t.push(x)
+        }
+        return t
+      }
+
+      var itemStorage = createItemStorage()
+      var burnStorage = itemStorage.splice(0,2)
 
       // prepare structures
       var activate_fullscreen = {
@@ -128,7 +147,6 @@
             response_ends_trial: false
         }
 
-
       var empty_show_cursor_block = {
               type: 'single-stim',
               stimuli: '',
@@ -139,42 +157,23 @@
               }
           }
 
-      function getUnusedItems(subtract){
-        pastWords = [];
-        jsPsych.data.getTrialsOfType('response-table').map(function(i){
-          pastWords.push.apply(pastWords,i['words_presented'])
-        });
-        if (typeof subtract != 'undefined'){pastWords.push.apply(pastWords,subtract)};
-        sample = wordlistItems.filter(function(item){
-          if (pastWords.indexOf(item['text']) > -1){
-            return false
-          }else{
-            return true
-          };
-        })
-        return sample
-      }
-
-      function getRandomWordlistSample(N,option,subtract){
-          unused = getUnusedItems(subtract)
-          sample = jsPsych.randomization.sample(unused,N)
-          if(typeof option === "undefined") {
-            return sample
-          }else{
-            newSample = []
-            for(i=0;i<N;i++){
-              newSample.push(sample[i][option])
-            }
-            return newSample
-          }
+      function retrieval(storage,idx,N,variable){
+        var sample =  storage=="burn" ? burnStorage[trialIdx] : itemStorage[trialIdx];
+        if (typeof variable != 'undefined'){
+          var sample = sample.map(function(i){return i[variable] });
         }
-      var items_func = function(){return getRandomWordlistSample(10)};
-      var colors_func = function(){return jsPsych.randomization.repeat(['red','blue'],5)};
+        sample = sample.slice(0,N)
+        return sample;
+      }
 
       var wordsequence_block = {
             type: 'wordlist',
-            items: items_func,
-            colors: colors_func,
+            items: function(){
+              sample = retrieval('regular',trialIdx,10)
+              return sample},
+            colors: function(){
+              sample = retrieval('regular',trialIdx,10,'color')
+              return sample },
             style: "position:relative;top:"+(centerY-25).toString()+"px;text-align:center;"+
                           "font-weight:bold;font-size:100px;",
             timing_stim: 2000,
@@ -184,33 +183,67 @@
             evaluate_block: true
         }
 
-      function getPreviousTenWords(){
-        lastTrials = jsPsych.data.getTrialsOfType('wordlist')
-        if (lastTrials.length == 0){return };
-        lastTenTrials = lastTrials.slice(-10).map(function(i){return i['text']})
-        return lastTenTrials
-      }
-
-      var response_words = function getResponseSet(wordlistItems){
-          var preWords = getPreviousTenWords() || [];
-          newSample = getRandomWordlistSample(5,'text',preWords);
-          var sample = preWords.concat(newSample);
-          var sample = sample.sort(function() { return(0.5-Math.random())});
-          return sample;
-      }
-
       var response_table = {
         type : "response-table",
         header: "<p style='font-weight:bold;text-align:center;margin-top:150px;'>"+texts.instruction_red+"</p>",
-        words : response_words,
+        words : function(){
+          var sample = retrieval('regular',trialIdx,15,'text');
+          sample = jsPsych.randomization.sample(sample,15);
+          return sample },
         rows : 3,
         cols : 5,
         tdStyle : "height:80px;width:150px;font-size:25px;padding:15px;text-align:center;",
         tableStyle: "position:relative;margin: 0 auto; top:"+(centerY-350).toString()+"px;"
       }
 
+      var burn_wordsequence_block = {
+            type: 'wordlist',
+            items: function(){
+              sample = retrieval('burn',trialIdx,10)
+              return sample},
+            colors: function(){
+              sample = retrieval('regular',trialIdx,10,'color')
+              return sample },
+            style: "position:relative;top:"+(centerY-25).toString()+"px;text-align:center;"+
+                          "font-weight:bold;font-size:100px;",
+            timing_stim: 2000,
+            timing_response: 2500,
+            timing_post_trial: 0,
+            response_ends_trial: true,
+            evaluate_block: true
+        }
+
+      var burn_response_table = {
+        type : "response-table",
+        header: "<p style='font-weight:bold;text-align:center;margin-top:150px;'>"+texts.instruction_red+"</p>",
+        words : function(){
+          var sample = retrieval('burn',trialIdx,15,'text');
+          sample = jsPsych.randomization.sample(sample,15);
+          return sample },
+        rows : 3,
+        cols : 5,
+        tdStyle : "height:80px;width:150px;font-size:25px;padding:15px;text-align:center;",
+        tableStyle: "position:relative;margin: 0 auto; top:"+(centerY-350).toString()+"px;"
+      }
+
+      var feedback_block = {
+            type: "text",
+            text: getPar(texts.feedback_bad_size_judgement,'margin-top:200px;font-weight:bold;'),
+            timing_response: -1,
+            cont_key: ["rightarrow"]
+        }
+
+      var feedback_chunk = {
+          chunk_type: 'if',
+          timeline: [feedback_block],
+          conditional_function: function(){
+            return (!moreThanThresholdCorrect(7))
+        }
+      };
+
       function moreThanThresholdCorrect(threshold){
         var d = jsPsych.data.getTrialsOfType('wordlist')
+        if (d.length==0){return true}
         d = d.slice(-10);
         var j = 0;
         for(i=0;i<10;i++){
@@ -223,58 +256,48 @@
         };
       };
 
-      var trialIdx=1;
-      var feedback_bad_size_judgement = {
-            type: "text",
-            text: getPar(texts.feedback_bad_size_judgement,'margin-top:200px;font-weight:bold;'),
-            timing_response: -1,
-            cont_key: ["rightarrow"]
-        }
-      var feedback_chunk = {
-          chunk_type: 'if',
-          timeline: [feedback_bad_size_judgement],
-          conditional_function: function(){
-            return (!moreThanThresholdCorrect(7)&&trialIdx>=2)
-        }
-      };
-
-      var trial_chunk = {
+      var trialIdx=0;
+      var burn_chunk = {
           chunk_type: 'while',
-          timeline: [cross_block, wordsequence_block, response_table,feedback_chunk, empty_block],
-          data:{test_trial:"true"},
+          timeline: [cross_block, burn_wordsequence_block, burn_response_table, empty_block],
+          data:{burn_trial:"true"},
           continue_function: function(){
-          if (trialIdx>=2&&moreThanThresholdCorrect(7)){
-            return false
-          }else{
-            trialIdx+=1
-            return true
+            trialIdx += 1;
+            if (trialIdx>=2){
+              trialIdx =0;
+              return false
+            }else{
+              return true
+            }
           }
-        }
       };
 
-      var testIdx=1;
       var test_chunk = {
           chunk_type: 'while',
-          timeline: [cross_block, wordsequence_block, response_table, empty_block],
-          data:{test_trial:"false"},
-          continue_function: function(){1
-          if (testIdx==12){
-            return false
+          timeline: [cross_block, wordsequence_block, response_table, feedback_chunk, empty_block],
+          data:{ burn_trial: "false"},
+          continue_function: function(){
+            if (!moreThanThresholdCorrect(7)){
+              return true;
+            }
+            trialIdx+=1;
+          if(trialIdx>=14){
+            return false;
           }else{
-            testIdx+=1
-            return true
+            return true;
           }
         }
       };
 
       var instructions_chunk = {
           chunk_type: 'while',
-          timeline: [instructions_block, trial_chunk, instructions_reoffer_block],
+          timeline: [instructions_block, burn_chunk, instructions_reoffer_block],
           continue_function: function(){
             var lasttrial = jsPsych.data.getLastTrialData();
             if (lasttrial.key_press == 'rightarrow'){
               return false
             }else{
+              trialIdx=0;
               return true
             };
         }
@@ -318,7 +341,6 @@
         }
       };
 
-
       //create default display element and style classes
       var fsDiv = "<div id='fsDiv' style='text-algin:center;position:absolute;height:"+screen_height.toString()+"px;width:"+screen_width.toString()+"px;'></div>";
       $('body').append(fsDiv)
@@ -355,7 +377,7 @@
       var experiment = [];
 
       experiment.push(activate_fullscreen);
-      experiment.push(consent_block);
+      // experiment.push(consent_block);
       experiment.push(instructions_chunk);
       experiment.push(test_chunk);
       experiment.push(empty_show_cursor_block);
